@@ -5,19 +5,19 @@ R1_bar <- 0.01
 R2_bar <- 0.013
 var1 = 0.0061
 var2 = 0.0046
-sd1 = sqrt(v1)
-sd2 = sqrt(v2)
+sd1 = sqrt(var1)
+sd2 = sqrt(var2)
 
 # define functional form of ro wand optimize
 rho_f <- function(x1) {(var2-x1^2*var1-(1-x1)^2*var2)/(2*x1*(1-x1)*sd1*sd2)}
-curve(rho, from=0, to=1, xname="x1") # yname is not a graphical parameter 
-print(optimize(rho, interval=c(0,1), maximum=TRUE))
+curve(rho_f, from=0, to=1, xname="x1") # yname is not a graphical parameter 
+print(optimize(rho_f, interval=c(0,1), maximum=TRUE))
 # the exact answer from solving analytically, agrees with minimizer 
-rho_min <- sqrt(v2/v1)
+rho_min <- sqrt(var2/var1)
 print(rho_min)
 
 # create sequence of x1 and x2 values following constraint for no short sales
-x1_seq <- seq(0, 1, 0.01)
+x1_seq <- seq(-1, 1, 0.01)
 x2_seq <- 1 - x1_seq
 
 # create the points for return and risk for the portfolio 
