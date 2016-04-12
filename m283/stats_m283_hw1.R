@@ -1,3 +1,5 @@
+# Exercise 1 and 2 
+
 # initialize variables 
 R1_bar <- 0.01
 R2_bar <- 0.013
@@ -25,3 +27,12 @@ sd_p <- sqrt(var_p)
 
 # plot 
 plot(sd_p, Rp_bar, col="blue", xlab="Stdev of portfolio", ylab="expected return of portfolio")
+
+
+# Exercise 4 
+sig2_avg = 50 
+cov_avg = 10 
+sig2_p <- function(n) {sig2_avg/n+(n-1)*cov_avg/n}
+n_vec <- c(5, 10, 20, 50, 100)
+risk_vec = sig2_p(n_vec)
+print(risk_vec)
