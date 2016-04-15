@@ -67,6 +67,20 @@ sd_p5_ns <- sqrt(var_p5_ns)
 points(sd_p5_ns, Rp_bar5_ns, col="green")
 
 
+# Exercise 7 
+returns = c(0.005174, 0.010617, 0.016947)
+Rf = 0.001 # risk free asset 
+rho7 = 0.0
+R_vec = returns - Rf
+cov_mat_7 = matrix( c(0.010025, 0, 0, 0, 0.002123, 0, 0, 0, 0.005775), nrow=3, ncol=3 )
+cov_mat_7_inv = solve(cov_mat_7)
+print(cov_mat_7_inv)
+Z = cov_mat_7_inv %*% R_vec
+lambda = sum(Z)
+X_c = Z / lambda
+print(t(cov_mat_7))
+
+
 # Exercise 8 
 
 returns = c(15, 12, 5, 9)
