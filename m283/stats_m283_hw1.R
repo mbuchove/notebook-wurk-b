@@ -67,6 +67,74 @@ sd_p5_ns <- sqrt(var_p5_ns)
 points(sd_p5_ns, Rp_bar5_ns, col="green")
 
 
+# Exercise 6 
+
+# apple
+a1 <- read.table("http://real-chart.finance.yahoo.com/table.csv?s=AAPL&a=00&b=01&c=2010&d=03&e=1&f=2015&g=m&ignore=.csv", sep=',', header=TRUE)
+# google 
+a2 <- read.table("http://real-chart.finance.yahoo.com/table.csv?s=IBM&a=00&b=01&c=2010&d=03&e=1&f=2015&g=m&ignore=.csv", sep=',', header=TRUE)
+
+# calculate returns from adjusted close prices 
+r1 <- (a1$Adj.Close[-64] - a1$Adj.Close[-1]) / (a1$Adj.Close[-1])
+r2 <- (a2$Adj.Close[-64] - a2$Adj.Close[-1]) / (a2$Adj.Close[-1])
+
+# create data frame  using the returns:
+rr <- data.frame(r1, r2)
+
+# compute the means:
+means <- colMeans(rr)
+
+#Find the covariance matrix:
+cov.matrix <- cov(rr)
+
+# make vector of 1s, one for each stock 
+ones <- rep(1, 2)
+
+# find the hyperbola parameters 
+A <- t(ones) %*% solve(cov.matrix) %*% means
+B <- t(means) %*% solve(cov.matrix) %*% means
+C <- t(ones) %*% solve(cov.matrix) %*% ones
+D <- B*C - A^2
+
+
+plot(0, A/C, main = "Portfolio possibilities curve", xlab = "Risk",
+     ylab = "Expected Return", type = "n",
+     xlim = c(-2*sqrt(1/C), 4*sqrt(1/C)), 
+     ylim = c(-2*A/C, 4*A/C))
+
+#Plot center of the hyperbola:
+points(0, A/C, pch = 19)
+
+#Plot transverse and conjugate axes:
+abline(v = 0) #Also this is the y-axis.
+abline(h = A/C)
+
+#Plot the x-axis:
+abline(h = 0)
+
+#Plot the minimum risk portfolio:
+points(sqrt(1/C), A/C, pch=19)
+
+#Find the asymptotes:
+V <- seq(-1, 1, 0.001)
+A1 <- A/C + V * sqrt(D/C)
+A2 <- A/C - V * sqrt(D/C)
+points(V, A1, type = "l")
+points(V, A2, type = "l")
+
+#Efficient frontier:
+minvar <- 1/C
+minE <- A/C
+sdeff <- seq((minvar)^0.5, 1, by = 0.0001)
+options(warn = -1)
+y1 <- (A + sqrt(D*(C*sdeff^2 - 1)))*(1/C) 
+y2 <- (A - sqrt(D*(C*sdeff^2 - 1)))*(1/C) 
+options(warn = 0)
+
+points(sdeff, y1, type = "l")
+points(sdeff, y2, type = "l")
+
+
 # Exercise 7 
 returns = c(0.005174, 0.010617, 0.016947)
 Rf = 0.001 # risk free asset 
