@@ -1,0 +1,119 @@
+\documentclass[]{article}
+
+\usepackage{amsmath}
+\usepackage{siunitx}
+\usepackage{microtype}
+
+\begin{document}
+5. This one is ambiguous, it doesn't actually make sense to say whether or not momentum is conserved without defining a system, which they don't do. Given a system, momentum of that system isn't conserved if there are any external forces acting on it. It seems like $A$ is the answer because of the string, not because of the explosion, as you can see in problem 6. $E$ might also make sense, if you count gravity as an external force. 
+\newline
+\newline
+6. Use conservation of momentum with the initial momentum = 0
+
+\begin{align*}
+p_i &= p_f \\
+	&= 0 \\ 
+	&= mv_1 +2mv_2
+\end{align*} 
+
+$$ v_1 = -2v_2$$
+
+for speed negative sign doesn't matter
+\newline
+\newline
+7. split this into two parts. first do the collision
+
+$$ p_i = p_f $$
+$$ mv_0 = (m+M)v_{block} $$ 
+$$ v_{block} = \frac{m}{m+M} v_0 $$
+
+now energy conservation: 
+
+\begin{align}
+W &= \Delta K \\
+F_f s &= \frac{1}{2}(m+M)v_{block}^2 \\
+\mu N s &= \frac{1}{2}(m+M)\left(\frac{m}{m+M} v_0\right)^2 \\ 
+\end{align}
+
+$$ N = (m+M)g $$ 
+$$ s = \left( \frac{m}{m+M} \right) ^2 \sqrt{\frac{v_0^2}{2\mu g}} $$
+\newline
+\newline
+8. This one is purely definition, elastic means conservation of kinetic energy. 
+\newline
+\newline
+9. same thing here, so $D$ and there's no special name for momentum conservation
+\newline
+\newline
+10. correct
+\newline
+\newline
+11. $A$ because momentum is exchanged between ball and earth. kinetic energy of the ball stays the same according to the problem because speed doesn't change, but this isn't really possible though
+\newline
+\newline
+12. use that result we found to simplify 1D elastic collisions to avoid the quadratic thing:
+
+$$ v_{2i}-v{1i} = -(v_{2f} v_{1f}) $$ 
+
+then combine with standard conservation of momentum:
+
+$$ m_1v_{1i} + m_2v{2i} = m_1v_{1f} + m_2v_{2f} $$ 
+\newline
+\newline
+15. completely inelastic $\rightarrow$ they will stick together. conserve momentum in both x and y:
+
+x:
+
+$$ .1m(45)\sin{\ang{47}} = 1.1mv_{fx} $$ 
+
+y: 
+
+$$ .1m(45)\cos{\ang{47}} + m(15) = 1.1mv_{fy} $$ 
+
+note sin and cos switch from normal because angle is w.r.t. vertical. all signs are positive because everything is either up or to the right. 
+
+now just solve for $v_x$ and $v_y$ then 
+$$ \theta = \arctan{\frac{v_x}{v_y}} $$ 
+\newline
+\newline
+16. $4$ is the only possibility, because car One transfers upward momentum to car Two (it loses upward momentum when it rebounds down). Car Two then has its initial rightward momentum and upward momentum, so the answer is $D$
+\newline
+\newline
+17. $E$ -- remember the equation 
+$$ \vec{F} = \frac{d\vec{p}}{dt} $$
+so if the sum of all forces $\sum \vec{F} = 0 $ then $\frac{d\vec{p}}{dt} = 0 $ thus $\vec{p} $ is constant. in a system, the constituents of the system can move independently, so the overall momentum of a system can be described as the motion or momentum of its center of mass
+\newline
+\newline
+19. use conservation of momentum, only $y$ is necessary:
+$$2(1)(10)\cos \ang{60} = 2v_y $$ 
+$$ v_y = 5 $$ 
+\newline
+\newline
+20. $A$ -- \SI{0}{m \per s}
+
+the initial momentum of the system was $0$, and an explosion is an internal interaction, and no external forces acted on it to change its momentum, so its final momentum is $0$
+\newline
+\newline
+Free response 1. 
+
+Your approach is right, just need a negative sign for the \SI{4}{g} mass because they say it is moving in the $-x$ direction
+\newline
+\newline
+Free response 2. 
+
+again, right idea, but you only found the x-position, this is 2-dimensional, so just do the same thing with the y-coordinates to find $y_cm$
+
+Free response 3. 
+
+more conservation of momentum, a little bit harder mathematically but same concepts. do x and y: 
+
+x:
+$$ (0.025)(5.5) = (0.025)v_A \cos{\ang{65}} + (0.05)v_B \cos{\ang{37}} $$ 
+
+y:
+$$ 0 = (0.025)v_A \sin{\ang{65}} - (0.05)v_B \sin{\ang{37}} $$ 
+
+easiest way to solve system of equations here is to solve $y$ equation for either $v_A$ or $v_B$ and plug into $x$ equation! 
+
+\end{document}
+
