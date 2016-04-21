@@ -90,6 +90,7 @@ cov.matrix <- cov(rr)
 # make vector of 1s, one for each stock 
 ones <- rep(1, 2)
 
+
 # find the hyperbola parameters 
 A <- t(ones) %*% solve(cov.matrix) %*% means
 B <- t(means) %*% solve(cov.matrix) %*% means
