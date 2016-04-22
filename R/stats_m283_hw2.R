@@ -109,6 +109,7 @@ R_rf <- Rbar_145 - R_f
 Z <- icov_145 %*% R_rf
 lambda <- sum(Z)
 x_G <- Z / lambda
+x_A <- x_G
 R_G <- ( t(x_G) %*% Rbar_145 )[1]
 risk_G <- sqrt(( t(x_G) %*% cov_145 %*% x_G )[1])
 print("point of tangency for part e.")
@@ -160,7 +161,7 @@ print("return of B:")
 print(R_B)
 
 # x_G -> x_A 
-cov_AB = t(x_B) %*% cov_145 %*% x_B
+cov_AB = (t(x_A) %*% cov_145 %*% x_B)[1]
 print("covariance of A and B:")
 print(cov_AB)
 points(risk_B, R_B, col="orange", pch=19)
@@ -183,25 +184,29 @@ R_A <- 0.12
 sig_A <- 0.2
 sig_B <- 0.08
 rho <- 0.1
-sr <- sqrt(rho*sig_A*sig_B)
+cov_t <- rho*sig_A*sig_B
 # a. 
-R_B <- ( R_A*(sig_B+sr) + R_f*(sig_A-sig_B) ) / (sig_A + sr)
+R_B <- ( R_A*(sig_B^2 + cov_t) + R_f*(sig_A^2 - sig_B^2) ) / (sig_A^2 + cov_t)
+print("Exercise 2, return of B:")
+print("for each stock even")
 print(R_B)
 # b. 
-R_B <- R_f + (R_A-R_f)*sr
+R_B <- R_f + (R_A - R_f)*cov_t / sig_A^2
+print("for no stock B")
 print(R_B) 
 
 # Exercise 3 
 # a. 
-rho <- (0.525 - 0.5*0.16 - 0.5*0.25) / (2*0.4*0.5)
-print(rho)
+print("Exercise 3:")
+rho <- (0.0525 - 0.25*0.16 - 0.25*0.25) / (2*0.25*0.4*0.5)
+print(rho*0.4*0.5)
 # b. 
 R_p <- 0.11
 R_f <- 0.05
 R_G <- ( t(c(0.6, 0.4)) %*% c(0.14, 0.1) )[1]
 x_G <- (R_p - R_f) / (R_G - R_f)
-print(x_G)
-# b. 
+print(1-x_G)
+# c. 
 R_p <- 0.10
 x_G <- (R_p - R_f) / (R_G - R_f)
 print(1-x_G)
@@ -213,6 +218,7 @@ ones <- rep(1, 2)
 iQ <- matrix(c(166.21139, -22.40241, -22.40241, 220.41076), nrow=2, ncol=2)
 Q <- solve(iQ)
 x_min <- iQ %*% ones / as.numeric(t(ones) %*% iQ %*% ones)
+print("Exercise 5; minimum risk portfolio composition:")
 print(x_min)
 # b. 
 R_f <- 0.011
@@ -221,6 +227,8 @@ R_A <- 0.01315856
 R_B <- 0.01219724
 # x_f * R_f + (1-x_f) * R_A = R_B
 x_f <- ( R_A - R_B ) / (R_A - R_f)
+print("composition of portfolio for A and risk free, respectively:")
+print(1-x_f)
 print(x_f)
 
 
@@ -229,58 +237,64 @@ print(x_f)
 # single index variance
 beta_A = 0.79
 beta_B = 1.12
-sig_eps_A = 0.027
-sig_eps_B = 0.006
-sig_m = sqrt(0.0022)
-var_si <- function(beta, sig_eps, sig_m) {
-  beta^2*sig_m^2 + sig_eps^2
+var_eps_A = 0.027
+var_eps_B = 0.006
+var_m = 0.0022
+var_si <- function(beta, var_eps, var_m) {
+  beta^2*var_m + var_eps
 }
-var_A <- var_si(beta_A, sig_eps_A, sig_m)
-var_B <- var_si(beta_B, sig_eps_B, sig_m)
-rho <- beta_A*beta_B*sig_m^2/(sqrt(var_A)*sqrt(var_B))
+var_A <- var_si(beta_A, var_eps_A, var_m)
+var_B <- var_si(beta_B, var_eps_B, var_m)
+rho6 <- beta_A*beta_B*var_m/(sqrt(var_A)*sqrt(var_B))
+print("Exercise 6: correlation coefficient:")
+print(rho6)
+# c. 
+print(sqrt(0.006/0.13))
 
 
+# Exercise 7 
+# a. 
+Rbar_m7 <- 0.10
+var_m7 <- 0.002
+x_7 <- c(0.3, 0.5, 0.2)
+alphas_7 <- c(0.01, 0.04, 0.08)
+betas_7 <- c(1.08, 0.80, 1.22)
+sigma_eps_7 <- c(0.003, 0.006, 0.001)
+beta_p7 <- t(x_7) %*% betas_7
+print("Exercise 7, beta of optimum portfolio:")
+Rbar_opt7 <- ( t(x_7) %*% alphas_7 + t(x_7) %*% betas_7 * Rbar_m7 )[1]
+print("expected return of optimum portfolio")
+print(Rbar_p7)
 
+# b. 
+beta_matrix_7 <- betas_7 %*% t(betas_7)
+print(beta_matrix_7)
+cov_matrix_7 <- beta_matrix_7*var_m7 + diag(sigma_eps_7)
+print("standard deviation of optimum portfolio")
+risk_opt7 <- sqrt( t(x_7) %*% cov_matrix_7 %*% x_7 )[1]
+print(risk_opt7)
+R_f7 <- 0.002
+dollars_p7 <- c(800000, -300000)
+x_p7 <- dollars_p7 / sum(dollars_p7)
+R_7 <- c(Rbar_opt7, R_f7)
+R_p7 <- t(x_p7) %*% R_7
+print("expected return of portfolio with borrowing:")
+print(R_p7)
+risk_p7 <- ( x_p7[1]*risk_opt7 )[1]
+print("expected standard deviation of portfolio with borrowing:")
+print(risk_p7)
 
-# extra test code 
+# c. 
+cov_pm <- ( t(x_7) %*% betas_7 )[1] * var_m7
+print("covariance of optimum portfolio and the market")
+print(cov_pm)
 
-# for all 5 stocks 
-#inv_cov <- solve(cov.mat)
-#Rbar_rf <- Rbar - R_f
-#Z <- inv_cov %*% Rbar
-#lambda <- sum(Z)
-#x_G <- Z / lambda
-#print(x_G)
-#R_G <- ( t(x_G) %*% Rbar )[1][1]
-#risk_G <- ( t(x_G) %*% cov.mat %*% x_G )[1][1]
-#print("risk of G:")
-#print(risk_G)
-#print("return of G:")
-#print(R_G)
+# d. 
+x_d7 <- c(0.6, 0.4)
+R_d7 <- ( t(x_d7) %*% R_7 )[1]
+risk_d7 <- x_d7[1]*risk_opt7
+print("risk and return for 7d.")
+print(risk_d7)
+print(R_d7)
 
-#abline(tangent)
-#plot?
-
-options(warn = -1)
-options(warn = 0)
-
-#print(double(10))
-
-`%+=%` = function(e1,e2) eval.parent(substitute(e1 <- e1 + e2))
-
-#install.packages(microbenchmark)
-#library(microbenchmark)
-#microbenchmark(f1(1000), f2(1000), f3(1000), times=5)
-
-system.time(sqrt(1000))
-
-#dfx = data.frame(ev1=1:10, ev2=sample(10:99, 10), ev3=10:1)
-#with(dfx, symbols(x=ev1, y=ev2, circles=ev3, inches=1/3, ann=F, bg="steelblue2", fg=NULL))
-
-
-#typeof(a)
-
-#typeof(a$P1)
-a1 = a$P1
-#print(a1)
-
+print(1.08*.002)
