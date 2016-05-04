@@ -41,11 +41,7 @@ D <- B*C - A^2
 #Efficient frontier:
 minvar <- 1/C
 minE <- A/C
-print(cov_15)
-print(cov_15[2, 2])
-print(max(1, 2))
-print(sqrt(max(cov_15[1, 1], cov_15[2, 2])))
-# only plot to risk of individual assets to be consistent with no shortselling
+# only plot the risk of individual assets to be consistent with no shortselling
 sdeff1 <- seq((minvar)^0.5, sqrt(max(cov_15[1, 1], cov_15[2, 2])), by = 0.0001)
 sdeff2 <- seq((minvar)^0.5, sqrt(min(cov_15[1, 1], cov_15[2, 2])), by = 0.0001)
 y1 <- (A + sqrt(D*(C*sdeff1^2 - 1)))*(1/C) 
@@ -53,11 +49,10 @@ y2 <- (A - sqrt(D*(C*sdeff2^2 - 1)))*(1/C)
 
 plot(0, A/C, main = "Portfolio Possibilities Curve", xlab = "Risk",
      ylab = "Expected Return", type = "n",
-     xlim = c(0, 4*sqrt(1/C)), 
-     ylim = c(-2*A/C, 4*A/C))
+     xlim = c(sqrt(minvar), 1.5*sqrt(minvar)), 
+     ylim = c(0.5*minE, 1.5*minE))
 points(sdeff1, y1, type="l", col="green")
 points(sdeff2, y2, type="l", col="red")
-#xlim = c(-2*sqrt(1/C), 4*sqrt(1/C)), 
 
 # find the minimum risk portfolio 
 x_min <- icov_15 %*% ones / as.numeric(t(ones) %*% icov_15 %*% ones)
@@ -130,7 +125,7 @@ plot(tangent, -0.01, 0.2,
      xlab="standard deviation", 
      ylab="Expected Return", 
      type ="l", 
-     ylim=c(-0.004, 0.019),
+     ylim=c(-0.004, 0.012),
      col="green")
 points(df$SD, df$Eret, pch=20)
 points(risk_G, R_G, col="blue", pch=19)
@@ -140,7 +135,7 @@ x_G <- 0.6
 x_f <- 1.0 - x_G
 R_p <- x_G * R_G + x_f * R_f
 risk_p <- x_G * risk_G 
-print("risk and return of point f on CAL:")
+print("risk and return (respectively) of point f on CAL:")
 print(risk_p)
 print(R_p)
 points(risk_p, R_p, col="yellow", pch=19)
@@ -264,7 +259,7 @@ beta_p7 <- t(x_7) %*% betas_7
 print("Exercise 7, beta of optimum portfolio:")
 Rbar_opt7 <- ( t(x_7) %*% alphas_7 + t(x_7) %*% betas_7 * Rbar_m7 )[1]
 print("expected return of optimum portfolio")
-print(Rbar_p7)
+print(Rbar_opt7)
 
 # b. 
 beta_matrix_7 <- betas_7 %*% t(betas_7)
@@ -293,8 +288,10 @@ print(cov_pm)
 x_d7 <- c(0.6, 0.4)
 R_d7 <- ( t(x_d7) %*% R_7 )[1]
 risk_d7 <- x_d7[1]*risk_opt7
-print("risk and return for 7d.")
+print("risk and return (respectively) for 7d.")
 print(risk_d7)
 print(R_d7)
 
-print(1.08*.002)
+# e. 
+# beta1 * betam * sig^2m
+#print(1.08*1.0*.002)
