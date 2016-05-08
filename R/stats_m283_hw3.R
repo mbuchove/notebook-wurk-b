@@ -31,7 +31,9 @@ beta_var <- rep(0, n) # variance of betas
 mse <- rep(0, n) # sigma squared epsilon 
 Rbar <- rep(0, n)
 var_R <- rep(0, n)
+sigma_R <- rep(0, n)
 Ratio <- rep(0, n)
+Ratio2 <- rep(0, n)
 
 print(str(stock_returns[,1]))
 print(str(data_list[,n+1]))
@@ -42,7 +44,7 @@ Rf = 0.001
 # now perform the regression 
 for(i in 1:n){
   stock[i] <- i
-  regress_m <- lm(data=stock_returns,formula=stock_returns[,i] ~ data_list[-t,n+2])
+  regress_m <- lm(data=stock_returns, formula=stock_returns[,i] ~ data_list[-t,n+2])
   #print(str(regress_m))
   #summary(regress_m)
   alpha[i] <- regress_m$coefficients[1]
@@ -52,8 +54,10 @@ for(i in 1:n){
   # divide by # d.o.f.
   mse[i] <- sum(regress_m$residuals^2) / (t-3)
   var_R[i] <- beta[i]^2 * var_m + mse[i]
+  #sigma_R[i] <- sqrt(var_R[i])
   Ratio[i] <- (Rbar[i] - Rf) / beta[i]
-}
+  Ratio2[i] <- (Rbar[i] - Rf) / sqrt(var_R[i])
+} # end for loop of performing regression on each stock 
 
 # print the results 
 print("alphas:")
@@ -83,18 +87,89 @@ print(beta_2)
 
 
 # Exercise 2 
-
+# construct the optimal portfolio using the single index model 
 table <- cbind(stock, alpha, beta, Rbar, mse, Ratio)
-ord_tab <- table[order(-Ratio)]
+ord_tab <- table[order(-Ratio), ]
 
-k <- (Rbar-Rf)*beta / mse
-print(str(k))
+# k = (Rbar - Rf) * beta / mse # but needs to be ordered 
+k <- (ord_tab[,4]-Rf)*ord_tab[,3] / ord_tab[,5] 
+sum_k <- cumsum(k)
+l <- ord_tab[,3]^2 / ord_tab[,5] # l = beta^2 / mse
+sum_l <- cumsum(l)
+
+# find C, it will be ordered properly 
+C <- var_m * sum_k / (1 + var_m*sum_l)
+print(cbind(ord_tab, k, sum_k, l, sum_l, C))
+
+C_ss <- C[n] # short sales are allowed 
+print(paste("if short sales are allowed, C* =", C_ss))
+i = 1 
+while(i <= n && C[i] < ord_tab[i,6]){
+  i <- i + 1
+} # iterate through until you meet condition for C* 
+C_ns <- C[i-1]
+print(paste("if short sales are not allowed, C* =", C_ns))
+
+# find composition of optimal portfolio if short sales are not allowed 
+z <- (beta/mse) * ( (Rbar-Rf)/beta - C_ns)
+x_ns <- z / sum(z)
+print("composition of optimal portfolio if short sales are not allowed:")
+print(x_ns)
+
+# find composition of optimal portfolio if short sales are not allowed 
+z <- (beta/mse) * ( (Rbar-Rf)/beta - C_ss)
+x_ss <- z / sum(z)
+print("composition of optimal portfolio if short sales are allowed:")
+print(x_ss)
 
 
+# Exercise 3 
+# calculate the average correlation 
+cov_stocks <- cov(stock_returns)
+
+rho <- 0
+for(i in 1:n){
+  for(j in 1:n){
+    if(i != j){
+      rho <- rho + cov_stocks[i,j] / sqrt(cov_stocks[i,i]*cov_stocks[j,j])
+    }
+  }
+} # sum over all non-diagonal correlations 
+rho <- rho / ( n*(n-1) )
+print(rho)
+
+s_i <- 1:n
+sigma_R <- sqrt(var_R)
+sum_R2 <- cumsum(Ratio2)
+ratio_rho <- rho / (1+rho*(s_i-1))
+C_ccm <- ratio_rho * sum_R2
+
+tab_ccm <- cbind(stock, Rbar, sigma_R, Ratio2, C_ccm)[order(-Ratio2) ,]
+print(tab_ccm)
+
+C_ccm_ss <- C_ccm[n] # short sales are allowed 
+print(paste("if short sales are allowed, C* =", C_ccm_ss))
+i = 1 
+while(i <= n && C_ccm[i] < tab_ccm[i,4]){
+  i <- i + 1
+} # iterate through until you meet condition for C* 
+C_ccm_ns <- C[i-1]
+print(paste("if short sales are not allowed, C* =", C_ccm_ns))
+
+# find composition of optimal portfolio if short sales are not allowed 
+z_ccm <- 1/((1-rho)*sigma_R) * ( (Rbar-Rf)/ - C_ccm_ns)
+x_ccm_ns <- z_ccm / sum(z_ccm)
+print("composition of optimal portfolio if short sales are not allowed:")
+print(x_ccm_ns)
+
+# find composition of optimal portfolio if short sales are allowed 
+z_ccm_ss <- 1/((1-rho)*sigma_R) * ( (Rbar-Rf)/ - C_ccm_ss)
+x_ccm_ss <- z_ccm_ss / sum(z_ccm_ss)
+print("composition of optimal portfolio if short sales are allowed:")
+print(x_ccm_ss)
 
 
-
-
-
+# table2 <- table1[1:which(col5==max(col5)), ]
+#system.time(case1)
 
 
