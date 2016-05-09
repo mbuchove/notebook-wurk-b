@@ -37,9 +37,26 @@ def build_tree(seq):
 
 def answer(seq):
     """returns a string representing the number (in base-10) of sequences that would result in the same tree as the given sequence"""
-    root_node = bun_node(seq[0])
-    for b in seq[1:]:
-        add_bunny(age, root_node)
+    l = len(seq)
+    if l < 1:
+        return 0
+    elif l == 1:
+        return 1
+    elif l == 2:
+        return 1
+    #if l < 3: return l
+    else:
+        num_matches = 1
+        root_node = bun_node(seq[0])
+        for age in seq[1:]:
+            add_bunny(age, root_node)
+
+        left_sub = []
+        right_sub = []
+        # keep scrolling as long as you are incrementing by 1 continuously or decrementing by 1 continuously 
+
+
+    return num_matches
 
 
 def compare_trees(root_A, root_B):
@@ -59,34 +76,48 @@ def compare_trees(root_A, root_B):
 from itertools import permutations
 def bruteforce(seq):
     """bruteforce solution for above answer"""
+    if len(seq) == 0:
+        return 0
     root_main = build_tree(seq)
 
     num_matches = 0
     for perm in permutations(seq):
+        #print(perm)
         perm_root = build_tree(perm)
         if compare_trees(root_main, perm_root):
             num_matches += 1
+            print(perm)
 
     return str(num_matches)
 
+#for perm in permutations([1,5,3,7]):
+#    print(perm)
+print(bruteforce([2, 1, 3]))
+print(bruteforce([1, 2, 8, 7, 6, 4, 5, 9]))
+print(bruteforce([5, 9, 8, 2, 1, 3  ]))
 
 
-for seq in [1, 2, 8, 7, 6, 4, 5, 9]:
-    if not answer(seq) == bruteforce(seq):
-        print("failure")
-        print(seq)
-print("complete!")
+if False:
+    for seq in [[1, 2, 8, 7, 6, 4, 5, 9],]:
+        if not answer(seq) == bruteforce(seq):
+            print("failure")
+            print(seq)
+        #else:
+            #print("passed")
+            #print(seq)
+    print("complete!")
 
 
-# test the implementations
-seq = [5, 9, 8, 2, 1]
-if bruteforce(seq) == "6":
-    print("test 1 passed")
-else:
-    print("test 1 failed")
+    # test the implementations
+    seq = [5, 9, 8, 2, 1]
+    if bruteforce(seq) == "6":
+        print("test 1 passed")
+    else:
+        print("test 1 failed")
 
-if bruteforce([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) == "1":
-    print("test 2 passed")
-else:
-    print("test 2 failed")
+    if bruteforce([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) == "1":
+        print("test 2 passed")
+    else:
+        print("test 2 failed")
 
+# end run tests

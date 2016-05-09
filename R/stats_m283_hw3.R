@@ -100,6 +100,8 @@ sum_l <- cumsum(l)
 # find C, it will be ordered properly 
 C <- var_m * sum_k / (1 + var_m*sum_l)
 print(cbind(ord_tab, k, sum_k, l, sum_l, C))
+print("single index model:")
+
 
 C_ss <- C[n] # short sales are allowed 
 print(paste("if short sales are allowed, C* =", C_ss))
@@ -140,12 +142,15 @@ print(rho)
 
 s_i <- 1:n
 sigma_R <- sqrt(var_R)
-sum_R2 <- cumsum(Ratio2)
+
+tab_ccm <- cbind(stock, Rbar, sigma_R, Ratio2)[order(-Ratio2) ,]
+sum_R2 <- cumsum(tab_ccm[i,4]) # cumulative sum of ordered ration 
 ratio_rho <- rho / (1+rho*(s_i-1))
 C_ccm <- ratio_rho * sum_R2
+#, C_ccm
+#print(tab_ccm)
 
-tab_ccm <- cbind(stock, Rbar, sigma_R, Ratio2, C_ccm)[order(-Ratio2) ,]
-print(tab_ccm)
+print("constant correlation model")
 
 C_ccm_ss <- C_ccm[n] # short sales are allowed 
 print(paste("if short sales are allowed, C* =", C_ccm_ss))
