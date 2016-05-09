@@ -43,7 +43,7 @@ def answer(seq):
     elif l == 1:
         return 1
     elif l == 2:
-        return 1
+        return 1 # not necessarily, look to above
     #if l < 3: return l
     else:
         num_matches = 1
@@ -53,7 +53,13 @@ def answer(seq):
 
         left_sub = []
         right_sub = []
-        # keep scrolling as long as you are incrementing by 1 continuously or decrementing by 1 continuously 
+
+        # keep scrolling as long as you are incrementing by 1 continuously or decrementing by 1 continuously
+
+        # if subset is entirely to one side of root (all left or all right) then it acts as its own sequence with the first entry being the root node
+
+        # if you increment or decrement by 1,
+
 
 
     return num_matches
@@ -92,7 +98,7 @@ def bruteforce(seq):
 
 #for perm in permutations([1,5,3,7]):
 #    print(perm)
-print(bruteforce([2, 1, 3]))
+print(bruteforce([2, 1, 3])) # returns 2
 print(bruteforce([1, 2, 8, 7, 6, 4, 5, 9]))
 print(bruteforce([5, 9, 8, 2, 1, 3  ]))
 
