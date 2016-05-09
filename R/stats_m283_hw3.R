@@ -35,8 +35,8 @@ sigma_R <- rep(0, n)
 Ratio <- rep(0, n)
 Ratio2 <- rep(0, n)
 
-print(str(stock_returns[,1]))
-print(str(data_list[,n+1]))
+#print(str(stock_returns[,1]))
+#print(str(data_list[,n+1]))
 
 # the risk-free return:
 Rf = 0.001
@@ -60,6 +60,7 @@ for(i in 1:n){
 } # end for loop of performing regression on each stock 
 
 # print the results 
+print("Exercise 1: fit to single index model:")
 print("alphas:")
 print(alpha)
 print("betas")
@@ -100,7 +101,8 @@ sum_l <- cumsum(l)
 # find C, it will be ordered properly 
 C <- var_m * sum_k / (1 + var_m*sum_l)
 ord_tab <- cbind(ord_tab, k, sum_k, l, sum_l, C)
-print("single index model:")
+print("table for single index model:")
+print(ord_tab)
 
 C_ss <- C[n] # short sales are allowed 
 cat("if short sales are allowed, C* =", C_ss, '\n')
@@ -112,7 +114,7 @@ i <- i - 1
 C_ns <- C[i]
 cat("if short sales are not allowed, C* =", C_ns, '\n')
 if(i == which(C==max(C))){
-  print("C* for short sales is the max value of C")
+  print("C* for no short sales is the max value of C")
 }
 
 # find composition of optimal portfolio if short sales are allowed 
@@ -152,9 +154,10 @@ sum_R2 <- cumsum(tab_ccm[,4]) # cumulative sum of ordered ration
 ratio_rho <- rho / (1+rho*(s_i-1))
 C_ccm <- ratio_rho * sum_R2
 tab_ccm <- cbind(tab_ccm, ratio_rho, sum_R2, C_ccm)
+print("table for constant correlation model:")
 print(tab_ccm)
 
-print("constant correlation model")
+#print("constant correlation model")
 
 C_ccm_ss <- C_ccm[n] # short sales are allowed 
 cat("if short sales are allowed, C* =", C_ccm_ss, '\n')
@@ -163,24 +166,25 @@ while(i <= n && C_ccm[i] < tab_ccm[i,4]){
   i <- i + 1
 } # iterate through until you meet condition for C* 
 i <- i - 1
-C_ccm_ns <- C[i]
+C_ccm_ns <- C_ccm[i]
 cat("if short sales are not allowed, C* =", C_ccm_ns, '\n')
-print(i)
-print(which(C_ccm==max(C_ccm)))
+if(i == which(C_ccm==max(C_ccm))){
+  print("C* for no short sales is the max value of C")
+}
 
 # find composition of optimal portfolio if short sales are allowed 
 #z_ccm_ss <- 1/((1-rho)*sigma_R) * ( (Rbar-Rf)/ - C_ccm_ss)
-z_ccm_ss <- 1/((1-rho)*tab_ccm[,3]) * ( (tab_ccm[,2]-Rf)/ - C_ccm_ss)
+z_ccm_ss <- (tab_ccm[,4]-C_ccm_ss)/((1-rho)*tab_ccm[,3])      
 x_ccm_ss <- z_ccm_ss / sum(z_ccm_ss)
 print("composition of optimal portfolio if short sales are allowed:")
 print(cbind(tab_ccm[,1], x_ccm_ss))
 
 # find composition of optimal portfolio if short sales are not allowed 
-tab_ccm_ns <- tab_ccm[1:i,]
-print(tab_ccm_ns)
-z_ccm_ns <- 1/((1-rho)*tab_ccm_ns[,3]) * ( (tab_ccm_ns[,2]-Rf)/ - C_ccm_ns)
+tab_ccm_ns <- tab_ccm[1:i,] # only go up to index of last positive stock 
+z_ccm_ns <- (tab_ccm_ns[,4]-C_ccm_ns)/((1-rho)*tab_ccm_ns[,3])
 x_ccm_ns <- z_ccm_ns / sum(z_ccm_ns)
 print("composition of optimal portfolio if short sales are not allowed:")
 print(cbind(tab_ccm_ns[,1], x_ccm_ns))
 
 #system.time(case1)
+#cat("\014") 
