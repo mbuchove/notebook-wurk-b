@@ -35,30 +35,31 @@ def build_tree(seq):
 
 
 
-def answer(seq):
-    """returns a string representing the number (in base-10) of sequences that would result in the same tree as the given sequence"""
-    l = len(seq)
-    if l < 1:
-        #return 0
-        return 1
-    elif l == 1:
-        return 1
-    elif l == 2:
-        return 1 # not necessarily, look to above
-    #if l < 3: return l
-    else:
-        from math import factorial
-        num_matches = 1
-        #root_node = bun_node(seq[0])
-        #for age in seq[1:]:
-        #    add_bunny(age, root_node)
-        left_seq = [x for x in seq if x < seq[0]]
-        right_seq = [x for x in seq if x > seq[0]]
-        nl = len(left_seq)
-        nr = len(right_seq)
-        combos = factorial(nl + nr) * (answer(left_seq) / factorial(nl)) * (answer(right_seq) / factorial(nr))
+def equiv_perms_bin(seq):
+    """find number of permutations of sequence that create the same binary tree
+    return result as a string"""
+    from math import factorial
 
-        return int(combos)
+    def recurs(seq):
+        """recursive call that returns ints"""
+        if len(seq) < 3:
+            return 1 # there is only one way to arrange sequences 2 or less
+        else:
+            # first split into left side and right side - exchanging order of left and right sequence doesn't make a difference
+            left_seq = [x for x in seq if x < seq[0]]
+            right_seq = [x for x in seq if x > seq[0]]
+            nl = len(left_seq)
+            nr = len(right_seq)
+            # the number of combinations is n choose k multiplied by the number of ways each sub tree could be arranged
+            # n choose k is the number of ways you can exchange the left and right numbers while preserving the order of left and right
+            # then multiply by the number of valid ways to arrange each sequence by making a recursive call
+            combos = factorial(nl + nr) * recurs(left_seq) / factorial(nl) * recurs(right_seq) / factorial(nr)
+
+            return int(combos)
+
+    # return string after recursive calls complete
+    return str(recurs(seq))
+
 
         # keep scrolling as long as you are incrementing by 1 continuously or decrementing by 1 continuously
 
@@ -67,8 +68,6 @@ def answer(seq):
         # if you increment or decrement by 1,
 
 
-
-    #return num_matches
 
 
 def compare_trees(root_A, root_B):

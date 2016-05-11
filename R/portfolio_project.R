@@ -31,7 +31,7 @@ Rbar <- colMeans(stock_returns)
 cov1 <- cov(stock_returns)
 icov1 <- solve(cov1)
 
-Rf <- 0.01 
+Rf <- 0.001 
 
 R_1 <- Rbar - Rf
 Z_1 <- icov1 %*% R_1
@@ -50,12 +50,6 @@ print(Rbar)
 
 
 
-a1 <- read.table("http://real-chart.finance.yahoo.com/table.csv?s=AAPL&a=00&b=01&c=2010&d=03&e=1&f=2015&g=m&ignore=.csv", sep=',', header=TRUE)
-r1 <- (a1$Adj.Close[-64] - a1$Adj.Close[-1]) / (a1$Adj.Close[-1])
-print(length(a1$Adj.Close))
-print(typeof(a1$Adj.Close))
-print(typeof(r1))
-print(typeof(a1$Adj.Close))
 
 
 #We can then use the round() function to round the column results to one decimal place. Or, in one step, we can create a new column that's already rounded to one decimal place:
@@ -63,8 +57,4 @@ print(typeof(a1$Adj.Close))
 companiesData <- transform(companiesData, margin = round((profit/revenue) * 100, 1))
 
 
-#print(get_table('AAPL'))
-
-
-# typeof
 # help
