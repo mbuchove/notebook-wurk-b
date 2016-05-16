@@ -3,6 +3,7 @@
 \usepackage{amsmath}
 
 \newcommand{\p}[1]{\left(#1\right)}
+\newcommand{\bs}[1]{\boldsymbol{#1}}
 
 
 \begin{document}
@@ -12,7 +13,36 @@
 	
 $$ A_{ij} = \frac{N_i \rho_{ij}}{1-\rho_{ii}} + \delta_{ij} $$ 
 $\delta_{ij}$ is the Kronecker delta 
+
 $$ C_{ij} = \sum_{i=1}^{N_i} \frac{\bar{R_i}-R_f}{\sigma_i \p{1-\rho_{ii}}} $$
+
+$$ \bs{\Phi} = \bs{A}^{-1}\bs{C} $$
+
+$$ z_i = \frac{1}{\sigma_i \p{1-\rho_{kk}}} \left[ \frac{\bar{R_i}-R_f}{\sigma_i} - \sum_{g=1}^p \rho_{kg} \Phi_g \right] $$ 
+where $k$ denotes the industry 
+$$ x_i = \frac{z_i}{\lambda} $$ 
+
+
+
+
+\section{European Options}
+Lower bound for European call:
+$$ C \geq S_0 - \frac{E}{1+r} $$ 
+
+Lower bound for price of European put: 
+$$ P \geq \frac{E}{1+r} - S_0 $$ 
+
+
+Upper bound for European call:
+$$ C \leq S_0 $$ 
+
+Upper bound for European put: 
+$$ P \leq \frac{E}{1+r} $$ 
+
+Put-Call Parity:
+$$ C + \frac{E}{1+r} = P + S_0 $$ 
+
+otherwise there is an opportunity for a riskless profit 
 
 
 
