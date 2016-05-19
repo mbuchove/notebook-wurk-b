@@ -186,5 +186,3 @@ print(X_c)
 returns = c(15, 12, 5, 9)
 stdevs = c(36, 15, 7, 21)
 plot(stdevs, returns)
-
-

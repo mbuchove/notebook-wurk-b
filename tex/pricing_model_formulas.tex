@@ -14,13 +14,16 @@
 $$ A_{ij} = \frac{N_i \rho_{ij}}{1-\rho_{ii}} + \delta_{ij} $$ 
 $\delta_{ij}$ is the Kronecker delta 
 
-$$ C_{ij} = \sum_{i=1}^{N_i} \frac{\bar{R_i}-R_f}{\sigma_i \p{1-\rho_{ii}}} $$
+$$ C_{j} = \sum_{i=1}^{N_j} \frac{\bar{R_i}-R_f}{\sigma_i \p{1-\rho_{jj}}} $$
 
 $$ \bs{\Phi} = \bs{A}^{-1}\bs{C} $$
 
 $$ z_i = \frac{1}{\sigma_i \p{1-\rho_{kk}}} \left[ \frac{\bar{R_i}-R_f}{\sigma_i} - \sum_{g=1}^p \rho_{kg} \Phi_g \right] $$ 
 where $k$ denotes the industry 
 $$ x_i = \frac{z_i}{\lambda} $$ 
+not proven: p denotes optimal portfolio 
+$$ \lambda = \frac{\bar{R}_p-R_f}{\sigma_p^2} $$ 
+
 
 
 
@@ -43,6 +46,24 @@ Put-Call Parity:
 $$ C + \frac{E}{1+r} = P + S_0 $$ 
 
 otherwise there is an opportunity for a riskless profit 
+
+\section{Option Strategies}
+
+\begin{itemize}
+
+\item A: option + stock
+\item B: spread 
+\item C: combination: all at same strike price except strangle 
+\begin{itemize}
+\item straddle - buy 1 put and 1 call at same price - payoff is symmetric V
+\item strip - 1 call and 2 puts - larger payoff if price goes down
+\item strap - 2 calls 1 put - larger payoff if price goes up 
+\item strangle - call big $E_b>S_1$, put small $E_s<S_1$ - flat between strike prices, goes up outside of them 
+
+\end{itemize}
+
+
+\end{itemize}
 
 
 
