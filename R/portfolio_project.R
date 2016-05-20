@@ -20,8 +20,6 @@ Rf <- 0.001 # risk free return
 returns <- getReturns(ticker=stock_list_full, start="2008-12-31", end="2013-12-31")
 # Markowitz model 
 model <- stockModel(returns, Rf=Rf, drop=N+1)
-#str(model)
-cov_m <- model$COV
 
 # find and plot the optimal portfolio 
 OP <- optimalPort(model=model)
@@ -41,8 +39,9 @@ plot(t_l, add=TRUE, col="green")
 legend(0.08, 0.03, c("PPC","CAL"), lty=c(1,1), col=c("black","green"))
 
 # portfolio of equally allocated funds 
+Rbar <- colMeans(model$returns)
 x_eq <- rep(1/N, N)
-R_eq <- t(x_eq) %*% colMeans(model$returns)
+R_eq <- t(x_eq) %*% Rbar
 var_eq <- t(x_eq) %*% model$COV %*% x_eq
 std_eq <- sqrt(var_eq)
 print("for equally allocated funds:")
@@ -60,6 +59,10 @@ cat("optimal portfolio of single index model, short sales NOT allowed, assuming 
 print(OP_sim_ns$X)
 cat("optimal return:", OP_sim_ns$R, '\n')
 cat("risk at optimal return:", OP_sim_ns$risk, '\n')
+print("the alphas are:")
+print(sim_ns$alpha)
+print("the betas are:")
+print(sim_ns$beta)
 
 # short sales allowed, Rf=0 default
 sim_ss <- stockModel(returns, model='SIM', index=N+1, Rf=Rf )
@@ -68,7 +71,10 @@ cat("optimal portfolio of single index model, short sales ARE allowed, assuming 
 print(OP_sim_ss$X)
 cat("optimal return:", OP_sim_ss$R, '\n')
 cat("risk at optimal return:", OP_sim_ss$risk, '\n')
-
+print("the alphas are:")
+print(sim_ss$alpha)
+print("the betas are:")
+print(sim_ss$beta)
 
 
 # Constant correlation model 
@@ -101,10 +107,32 @@ print(OP_mgm$X)
 cat("optimal return:", OP_mgm$R, '\n')
 cat("risk at optimal return:", OP_mgm$risk, '\n')
 
+# part 7, plot all stocks 
+points(model$sigma, Rbar)
+# points of optimal portfolios
+opt_risks <- c(OP$risk, OP_sim_ns$risk, OP_sim_ss$risk, OP_ccm_ns$risk, OP_ccm_ss$risk, OP_mgm$ris)
+opt_Rs <- c(OP$risk, OP_sim_ns$R, OP_sim_ss$R, OP_ccm_ns$R, OP_ccm_ss$R, OP_mgm$ris)
+points(opt_risks, opt_Rs)
+
+str(returns$R)
+str(OP$X)
+
+matrix_returns <- as.matrix(returns$R[,-(N+1)])
+Rs_eq <- matrix_returns %*% x_eq
+Rs_sim <- matrix_returns %*% OP_sim_ns$X
+Rs_50 <- matrix_returns %*% (x_eq + OP_sim_ns$X)/2
+Rs_ccm <- matrix_returns %*% OP_ccm_ns$X
+Rs_mgm <- matrix_returns %*% OP_mgm$X
 
 
 
 
+
+testPort
+
+
+#str(model)
+cov_m <- model$COV
 
 #str(returns)
 #help(stockPortfolio)
