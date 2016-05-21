@@ -17,9 +17,9 @@ N <- length(stock_list_full) - 1
 Rf <- 0.001 # risk free return 
 
 # using the stockPortfolio package 
-returns <- getReturns(ticker=stock_list_full, start="2008-12-31", end="2013-12-31")
+ret_hist <- getReturns(ticker=stock_list_full, start="2008-12-31", end="2013-12-31")
 # Markowitz model 
-model <- stockModel(returns, Rf=Rf, drop=N+1)
+model <- stockModel(ret_hist, Rf=Rf, drop=N+1)
 
 # find and plot the optimal portfolio 
 OP <- optimalPort(model=model)
@@ -52,7 +52,7 @@ cat("standard deviation:", std_eq, '\n')
 # Single Index Model 
 
 # no short sales allowed 
-sim_ns <- stockModel(returns, model='SIM', index=N+1, Rf=Rf, shortSelling=FALSE)
+sim_ns <- stockModel(ret_hist, model='SIM', index=N+1, Rf=Rf, shortSelling=FALSE)
 
 OP_sim_ns <- optimalPort(model=sim_ns)
 cat("optimal portfolio of single index model, short sales NOT allowed, assuming risk-free rate of", Rf, '\n')
@@ -65,7 +65,7 @@ print("the betas are:")
 print(sim_ns$beta)
 
 # short sales allowed, Rf=0 default
-sim_ss <- stockModel(returns, model='SIM', index=N+1, Rf=Rf )
+sim_ss <- stockModel(ret_hist, model='SIM', index=N+1, Rf=Rf )
 OP_sim_ss <- optimalPort(model=sim_ns)
 cat("optimal portfolio of single index model, short sales ARE allowed, assuming risk-free rate of", Rf, '\n')
 print(OP_sim_ss$X)
@@ -79,7 +79,7 @@ print(sim_ss$beta)
 
 # Constant correlation model 
 # short sales NOT allowed. Rf=0 again
-ccm_ns <- stockModel(returns, model='CCM', drop=N+1, Rf=Rf, shortSelling=FALSE)
+ccm_ns <- stockModel(ret_hist, model='CCM', drop=N+1, Rf=Rf, shortSelling=FALSE)
 OP_ccm_ns <- optimalPort(model=ccm_ns)
 cat("optimal portfolio of constant correlation model, short sales NOT allowed, assuming risk-free rate of", Rf, '\n')
 print(OP_ccm_ns$X)
@@ -88,7 +88,7 @@ cat("risk at optimal return:", OP_ccm_ns$risk, '\n')
 
 
 # short sales ARE allowed 
-ccm_ss <- stockModel(returns, model='CCM', drop=N+1, Rf=Rf)
+ccm_ss <- stockModel(ret_hist, model='CCM', drop=N+1, Rf=Rf)
 OP_ccm_ss <- optimalPort(model=ccm_ss)
 cat("optimal portfolio of constant correlation model, short sales NOT allowed, assuming risk-free rate of", Rf, '\n')
 print(OP_ccm_ss$X)
@@ -100,7 +100,7 @@ cat("risk at optimal return:", OP_ccm_ss$risk, '\n')
 
 # Multi group model
 # only do for short sales allowed, may not work for no short sales 
-mgm <- stockModel(returns, model='MGM', drop=N+1, Rf=Rf, industry=ind)
+mgm <- stockModel(ret_hist, model='MGM', drop=N+1, Rf=Rf, industry=ind)
 OP_mgm <- optimalPort(model=mgm)
 cat("optimal portfolio of multi group model, short sales ARE allowed, assuming risk-free rate of", Rf, '\n')
 print(OP_mgm$X)
@@ -114,28 +114,61 @@ opt_risks <- c(OP$risk, OP_sim_ns$risk, OP_sim_ss$risk, OP_ccm_ns$risk, OP_ccm_s
 opt_Rs <- c(OP$risk, OP_sim_ns$R, OP_sim_ss$R, OP_ccm_ns$R, OP_ccm_ss$R, OP_mgm$ris)
 points(opt_risks, opt_Rs)
 
-str(returns$R)
-str(OP$X)
 
-matrix_returns <- as.matrix(returns$R[,-(N+1)])
-Rs_eq <- matrix_returns %*% x_eq
-Rs_sim <- matrix_returns %*% OP_sim_ns$X
-Rs_50 <- matrix_returns %*% (x_eq + OP_sim_ns$X)/2
-Rs_ccm <- matrix_returns %*% OP_ccm_ns$X
-Rs_mgm <- matrix_returns %*% OP_mgm$X
-
-
+# Part B
+# find monthly average returns for several different portfolios 
+ret_hist_matrix <- as.matrix(ret_hist$R[,-(N+1)])
+Rs_eq <- ret_hist_matrix %*% x_eq
+Rs_sim <- ret_hist_matrix %*% OP_sim_ns$X
+Rs_50 <- ret_hist_matrix %*% (x_eq + OP_sim_ns$X)/2
+Rs_ccm <- ret_hist_matrix %*% OP_ccm_ns$X
+Rs_mgm <- ret_hist_matrix %*% OP_mgm$X
 
 
+# get returns in more recent date range to test performance of portfolios 
+ret_perf <- getReturns(ticker=stock_list_full[-(N+1)], start="2013/12/31", end="2016/04/30")
+ret_perf_matrix <- as.matrix(ret_perf$R[,-(N+1)])
 
-testPort
+# test portfolio command from stockPortfolio package 
+tp <- testPort(theData=ret_perf, X=x_eq)
 
 
-#str(model)
-cov_m <- model$COV
+# combine all the returns, and calculate total returns for all portfolios in full date range
+ret_full_matrix <- rbind(ret_perf_matrix, ret_hist_matrix)
 
-#str(returns)
-#help(stockPortfolio)
+Rs_eq <- ret_full_matrix %*% x_eq
+Rs_sim <- ret_full_matrix %*% OP_sim_ns$X
+Rs_50 <- ret_full_matrix %*% (x_eq + OP_sim_ns$X)/2
+Rs_ccm <- ret_full_matrix %*% OP_ccm_ns$X
+Rs_mgm <- ret_full_matrix %*% OP_mgm$X
+
+# create column vector of dates using Date object 
+date_strings <- dimnames(Rs_eq)[[1]]
+date_c <- as.Date(x=date_strings, format="%Y-%m-%d" )
+# this can be reused for all
+
+# put returns and dates together into data frame for plotting
+df <- data.frame(Returns=Rs_eq, date=date_c)
+plot(Returns ~ date, df, main="equally allocated portfolio")
+
+
+df$Date <- date_strings
+
+
+
+c(date_strings[1])
+typeof(c(date_strings))
+dt <- as.Date("2015-08-03"); dt
+help(Date)
+typeof(c("2015-08-03", "hi"))
+help(read.table)
+
+
+
+if (Sys.info()["sysname"] == "Darwin")
+  print("true")
+
+
 
 # We can then use the round() function to round the column results to one decimal place. Or, in one step, we can create a new column that's already rounded to one decimal place:
 

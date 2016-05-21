@@ -39,13 +39,23 @@ R_G <- ( t(x_1) %*% Rbar )[1]
 risk_G <- sqrt( t(x_1) %*% cov1 %*% x_1 )[1]
 
 
-if (Sys.info()["sysname"] == "Darwin")
-  print("true")
 
 print(stock_data)
 print(cov1)
 print(Rbar)
 #print(gyih[2]$Adj.Close[-64])
+
+str(ret_hist$R)
+str(OP$X)
+
+#print(c(stock_list_full[-length(stock_list_full)]))
+
+
+#str(model)
+cov_m <- model$COV
+
+#str(returns)
+#help(stockPortfolio)
 
 
 
