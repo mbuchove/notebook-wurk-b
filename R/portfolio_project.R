@@ -100,7 +100,6 @@ print("the betas are:")
 print(sim_ss$beta)
 print("the alphas and betas do not depend on whether or not short selling is allowed")
 
-OP_sim_ns$
 # Constant correlation model 
 # short sales NOT allowed. Rf=0 again
 ccm_ns <- stockModel(ret_hist, model='CCM', drop=N+1, Rf=Rf, shortSelling=FALSE)
@@ -139,27 +138,31 @@ points(opt_risks, opt_Rs, col='green')
 
 
 # Part B
-# find monthly average returns for several different portfolios 
+# for simplicity, create a matrix of all the X's for each portfolio 
 ret_hist_matrix <- as.matrix(ret_hist$R[,-(N+1)])
 x_sim <- OP_sim_ns$X
 x_half <-  (x_eq + OP_sim_ns$X)/2
 x_ccm <- OP_ccm_ns$X
 x_mgm <- OP_mgm$X
+X_mat <- cbind(x_eq, x_sim, x_half, x_ccm, x_mgm)
 
-Rs_eq <- ret_hist_matrix %*% x_eq
-Rs_sim <- ret_hist_matrix %*% OP_sim_ns$X
-Rs_half <- ret_hist_matrix %*% x_half
-Rs_ccm <- ret_hist_matrix %*% OP_ccm_ns$X
-Rs_mgm <- ret_hist_matrix %*% OP_mgm$X
+# calculate the monthly returns for each portfolio with historical data 
+Rs_hist <- ret_hist_matrix %*% X_mat
+print("average monthly returns for each portfolio from historical data")
+print(colMeans(Rs_hist))
 
 
 # get returns in more recent date range to test performance of portfolios 
 ret_perf <- getReturns(ticker=stock_list_full, start="2013/12/31", end="2016/04/30")
 ret_perf2 <- getReturns(ticker=stock_list_full[-(N+1)], start="2013/12/31", end="2016/04/30")
-ret_mkt <- ret_perf$R[,N+1]
+ret_mkt_perf <- ret_perf$R[,N+1]
 ret_perf_matrix <- as.matrix(ret_perf2$R)
 date_strings <- dimnames(ret_perf_matrix)[[1]]
 date_c <- as.Date(x=date_strings, format="%Y-%m-%d" )
+
+# now find the monthly returns for newer data
+Rs_perf <- ret_perf_matrix %*% X_mat
+avg_ret_perf <- colMeans(Rs_perf)
 
 
 options(warn=-1)
@@ -181,83 +184,49 @@ lines(tp_eq, lty=1)
 lines(tp_sim, col='red')
 lines(tp_half, col='green')
 lines(tp_ccm, col='blue')
-lines(cumprod(1+rev(ret_mkt)), col="pink", lwd=2)
+lines(cumprod(1+rev(ret_mkt_perf)), col="pink", lwd=2)
 legend(0.01, 1.8, models, ltypes, col=colors)
-
-
 
 # combine all the returns, and calculate total returns for all portfolios in full date range
 ret_full_matrix <- rbind(ret_perf_matrix, ret_hist_matrix)
-Rs_eq_full <- ret_full_matrix %*% x_eq
-Rs_sim_full <- ret_full_matrix %*% x_sim
-Rs_half_full <- ret_full_matrix %*% x_half
-Rs_ccm_full <- ret_full_matrix %*% x_ccm
-Rs_mgm_full <- ret_full_matrix %*% x_mgm
+Rs_full <- ret_full_matrix %*% X_mat
 
 # create column vector of dates using Date object 
-avg_returns_mat <- cbind(Rs_eq, Rs_sim, Rs_half, Rs_ccm, Rs_mgm)
 portfolio_names <- c("equally allocated", "optimal SIM", "half eq half SIM", "optimal CCM", "optimal MGM")
-date_strings <- dimnames(avg_returns_mat)[[1]]
+date_strings <- dimnames(ret_perf_matrix)[[1]]
 date_c <- as.Date(x=date_strings, format="%Y-%m-%d" )
 # all average returns combined into a matrix 
 
 # sharpe ratio - done for historical data 
-avg_returns_full <- colMeans(avg_returns_mat)
-X_mat <- cbind(x_eq, x_sim, x_half, x_ccm, x_mgm)
-avg_sigmas_full <- diag(t(X_mat) %*% model$COV %*% X_mat)
-sharpe_ratio <- (avg_returns_full - Rf) / avg_sigmas_full
+cov_perf <- cov(ret_perf$R[,-(N+1)])
+sig_port <- diag( t(X_mat) %*% cov_perf %*% X_mat ) 
+sharpe_ratio <- (avg_ret_perf - Rf) / sig_port 
 names(sharpe_ratio) <- portfolio_names
 print("Sharpe ratios:")
 print(sharpe_ratio)
 
-colMeans(tp_sim$returns %*% tp_sim$X)
 
-# Treynor ratio 
-beta_mat <- as.matrix(sim_ns$beta)
+# Treynor ratio, first calculate betas for new data 
+sim_perf <- stockModel(ret_perf, model='SIM', index=N+1, Rf=Rf )
+beta_mat <- as.matrix(sim_perf$beta)
 avg_betas <- t(X_mat) %*% beta_mat
-treynor_measure <- ( (avg_returns_full - Rf) / avg_betas )[,1]
+treynor_measure <- ( (avg_ret_perf - Rf) / avg_betas )[,1]
 names(treynor_measure) <- portfolio_names
 print("Treynor measures: ")
 print(treynor_measure)
 
 # Jensen differential performance index 
-mkt_avg <- mean(ret_mkt)
-jensen_measure <- ( avg_returns_full - (Rf + avg_betas * (mkt_avg - Rf)) )[,1]
+mkt_avg <- mean(ret_mkt_perf)
+jensen_measure <- ( avg_ret_perf - (Rf + avg_betas * (mkt_avg - Rf)) )[,1]
 names(jensen_measure) <- portfolio_names
 print("Jensen measure: ")
 print(jensen_measure)
 
 # differential return with risk measured by standard deviation 
-sig_mkt <- sqrt(var(ret_mkt))
-cov_perf <- cov(ret_perf$R[,-(N+1)])
-sig_port <- diag( t(X_mat) %*% cov_perf %*% X_mat ) 
-diff_ret <- avg_returns_full - ( Rf + (mkt_avg-Rf) * sig_port/sig_mkt )
+sig_mkt <- sqrt(var(ret_mkt_perf))
+diff_ret <- avg_ret_perf - ( Rf + (mkt_avg-Rf) * sig_port/sig_mkt )
 names(diff_ret) <- portfolio_names
 print("differential returns with risk measured by standard deviation")
 print(diff_ret)
 
-# put returns and dates together into data frame for plotting
-#for (i in 1:ncol(avg_returns_mat)){
-#  df <- data.frame(Returns=avg_returns_mat[,i], date=date_c)
-#  window_fnc()
-#  plot(Returns ~ date, df, main=paste(portfolio_names[i], "portfolio"))
-#}
-
-#date_d <- date_d[-26]
-
-#plot(tp_eq, lty=1)
-#typeof(OP_sim_ns$X)
-#ports <- cbind(x_eq, OP_sim_ns$X, (x_eq + OP_sim_ns$X)/2, OP_ccm_ns$X, OP_mgm$X)
-#print(ret_full_matrix %*% ports)
-
-#df <- data.frame(Returns=tp_sim$sumRet, date=date_c)
-#window_fnc()
-#plot(Returns ~ date, df, main=paste(portfolio_names[i], "portfolio"))
-
-#print(dimnames(tp_eq$sumRet[1]))
-#sr <- tp_eq$sumRet
-#str(ret_perf)
-
-#tp_sim$sumRet
-#length(date_c)
 

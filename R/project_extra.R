@@ -1,3 +1,38 @@
+#avg_returns_mat <- cbind(Rs_eq, Rs_sim, Rs_half, Rs_ccm, Rs_mgm)
+#avg_returns_full <- colMeans(avg_returns_mat)
+#colMeans(tp_sim$returns %*% tp_sim$X)
+#avg_sigmas_full <- diag(t(X_mat) %*% model$COV %*% X_mat)
+
+# put returns and dates together into data frame for plotting
+#for (i in 1:ncol(avg_returns_mat)){
+#  df <- data.frame(Returns=avg_returns_mat[,i], date=date_c)
+#  window_fnc()
+#  plot(Returns ~ date, df, main=paste(portfolio_names[i], "portfolio"))
+#}
+
+#date_d <- date_d[-26]
+
+#plot(tp_eq, lty=1)
+#typeof(OP_sim_ns$X)
+#ports <- cbind(x_eq, OP_sim_ns$X, (x_eq + OP_sim_ns$X)/2, OP_ccm_ns$X, OP_mgm$X)
+#print(ret_full_matrix %*% ports)
+
+#df <- data.frame(Returns=tp_sim$sumRet, date=date_c)
+#window_fnc()
+#plot(Returns ~ date, df, main=paste(portfolio_names[i], "portfolio"))
+
+#print(dimnames(tp_eq$sumRet[1]))
+#sr <- tp_eq$sumRet
+#str(ret_perf)
+
+#tp_sim$sumRet
+#length(date_c)
+
+
+
+
+
+
 stock_request_str1 <- "http://real-chart.finance.yahoo.com/table.csv?s="
 stock_request_str2 <- "&a=11&b=31&c=2008&d=11&e=31&f=2013&g=m&ignore=.csv"
 stock_list_tech <- list('AAPL', 'GOOG', 'GOOGL')
