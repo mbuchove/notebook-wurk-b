@@ -7,6 +7,9 @@ stock_list_extra <- list('BRK-B')
 stock_list_market <- list('GSPC', 'NAQ.f', '^DJI')
 stock_list_full <- c(stock_list_tech, stock_list_air, stock_list_retail, 'GSPC')
 
+# We can then use the round() function to round the column results to one decimal place. Or, in one step, we can create a new column that's already rounded to one decimal place:
+#companiesData <- transform(companiesData, margin = round((profit/revenue) * 100, 1))
+
 
 get_table <- function(stock){
   rq = paste0(stock_request_str1, stock, stock_request_str2)
