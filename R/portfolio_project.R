@@ -131,9 +131,10 @@ cat("risk at optimal return:", OP_mgm$risk, '\n')
 # part 7, plot all stocks 
 points(model$sigma, Rbar, col='blue')
 # points of optimal portfolios
-opt_risks <- c(OP$risk, OP_sim_ns$risk, OP_sim_ss$risk, OP_ccm_ns$risk, OP_ccm_ss$risk, OP_mgm$ris)
+opt_risks <- c(OP$risk, OP_sim_ns$risk, OP_sim_ss$risk, OP_ccm_ns$risk, OP_ccm_ss$risk, OP_mgm$risk)
 opt_Rs <- c(OP$R, OP_sim_ns$R, OP_sim_ss$R, OP_ccm_ns$R, OP_ccm_ss$R, OP_mgm$R)
-points(opt_risks, opt_Rs, col='green')
+opt_risks
+points(opt_risks, opt_Rs, col='yellow', pch=18)
 #savePlot()
 
 
@@ -163,7 +164,9 @@ date_c <- as.Date(x=date_strings, format="%Y-%m-%d" )
 # now find the monthly returns for newer data
 Rs_perf <- ret_perf_matrix %*% X_mat
 avg_ret_perf <- colMeans(Rs_perf)
-
+print("average monthly returns for each portfolio from recent data")
+print(colMeans(Rs_perf))
+#print("cumulative returns for each portfolio")
 
 options(warn=-1)
 # test portfolio command from stockPortfolio package to get cumulative returns 
@@ -173,6 +176,7 @@ tp_half <- testPort(ret_perf, X=x_half)
 tp_ccm <- testPort(ret_perf, OP_ccm_ns)
 tp_mgm <- testPort(ret_perf, OP_mgm)
 options(warn=1)
+print(tp_eq$sumRet)
 
 # plot the cumulative returns together with the market average 
 window_fnc()
@@ -184,7 +188,7 @@ lines(tp_eq, lty=1)
 lines(tp_sim, col='red')
 lines(tp_half, col='green')
 lines(tp_ccm, col='blue')
-lines(cumprod(1+rev(ret_mkt_perf)), col="pink", lwd=2)
+lines(cumprod(1+rev(ret_mkt_perf)), col="purple", lwd=2)
 legend(0.01, 1.8, models, ltypes, col=colors)
 
 # combine all the returns, and calculate total returns for all portfolios in full date range
