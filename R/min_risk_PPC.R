@@ -1,3 +1,4 @@
+# HW 1 
 # Exercise 1 and 2 
 
 # initialize variables 

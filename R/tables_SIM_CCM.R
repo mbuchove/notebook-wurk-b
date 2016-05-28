@@ -1,3 +1,4 @@
+# HW 3 
 # Exercise 1 
 # read in data 
 data_list <- read.table("http://www.stat.ucla.edu/~nchristo/statc183c283_10stocks.txt", header=TRUE)

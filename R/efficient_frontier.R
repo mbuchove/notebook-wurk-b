@@ -1,3 +1,5 @@
+# HW 2 
+
 # Exercise 1 
 
 # read the table 
