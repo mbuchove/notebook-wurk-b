@@ -18,6 +18,8 @@ binomial_formula_call <- function(S0, E, u, d, r, n){
   
 } # binomial_formula 
 
+# 1 
+
 S0 <- 50.00 
 E <- 60.00
 u <- 1.2

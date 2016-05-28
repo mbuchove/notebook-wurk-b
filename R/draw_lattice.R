@@ -51,15 +51,24 @@ dot_lattice <- function(S, labels=FALSE) {
   cat("}", sep="")
 } # dot_lattice
 
+# 1
 lat_10 <- capture.output(dot_lattice(gen_lattice(N=10, u=1.2, d=1./1.2)))
 cat(lat_10, file="/Users/mbuchove/Dropbox/Physics/ProbabilityStatistics/Stats_C283/lattice_10_nolabel.dot")
-
 lat_10_lab <- capture.output(dot_lattice(gen_lattice(S0=50, N=10, u=1.2, d=1./1.2), labels=TRUE))
 cat(lat_10_lab, file="/Users/mbuchove/Dropbox/Physics/ProbabilityStatistics/Stats_C283/lattice_10_label.dot")
+
+# 2 
+r <- 0.05
+# adjust the rate for continous compounding 
+r <- 1+exp(r/4)
+u <- 1.06
+d <- 0.95
+p <- (r-d)/(u-d)
 
 lat_prices <- capture.output(dot_lattice(gen_lattice(S0=50, N=3, u=1.06, d=0.95, E=0), labels=TRUE))
 cat(lat_prices, file="/Users/mbuchove/Dropbox/Physics/ProbabilityStatistics/Stats_C283/bpm_lattice_3_price.dot")
 
+# 3 
 lat_ivals_call <- capture.output(dot_lattice(gen_lattice(S0=50, N=3, u=1.06, d=0.95, E=51.00), labels=TRUE))
 cat(lat_ivals_call, file="/Users/mbuchove/Dropbox/Physics/ProbabilityStatistics/Stats_C283/bpm_lattice_3_ivals_call.dot")
 
@@ -70,3 +79,6 @@ lat_ivals_put
 
 # process dot files with 
 # dot -Tpng -o lattice_10_nolabel.png -v lattice_10_nolabel.dot 
+
+help(pbinom)
+
