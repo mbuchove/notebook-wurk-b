@@ -14,7 +14,7 @@ binomial_formula_call <- function(S0, E, u, d, r, n){
   j <- k:n
   Cj <- choose(n, j) * ( S0 * pp^j * (1-pp)^(n-j) - E/(r)^n * p^j * (1-p)^(n-j) )
   
-  sum(Cj)
+  return(sum(Cj))
   
 } # binomial_formula 
 

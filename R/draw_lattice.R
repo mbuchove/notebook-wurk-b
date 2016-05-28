@@ -14,6 +14,9 @@ gen_lattice <- function(S0=100, u=1.1, d=.9, N=3, E=0, option='call') {
       count <- count + 1
     } # for loop over nodes in time step 
   } # for loop over time steps 
+  
+  
+  
   return(S)
 } # gen_lattice
 
