@@ -45,6 +45,7 @@ print(paste0("C = $", Cv))
 print("they agree!")
 
 # b, c - construct lattices 
+
 # function to generate the binomial tree lattice, returns a column vector with node values 
 gen_lattice_price <- function(S0=100, u=1.1, d=.9, N=3, E=0, option='call') {
   S <- c()
@@ -138,7 +139,6 @@ cat(lat_ivals_put,
 
 # process dot files with 
 # dot -Tpng -o lattice_10_nolabel.png -v lattice_10_nolabel.dot 
-
 
 
 
