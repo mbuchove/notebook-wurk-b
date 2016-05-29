@@ -1,35 +1,37 @@
 # hw 5 
 
+# 1 
 binomial_formula_call <- function(S0, E, u, d, r, n){
+  # calculate the probabilities 
   p <- (r-d)/(u-d)
   pp <- (u/r)*p
-  print(p)
-  print(pp)
+
+  # solve S0 * u^k * d^(n-k) >= E 
+  k <- as.integer(ceiling(log(E/S0/d^n, u/d)))
+  print("a. the number of up movements to make the call in the money:")
+  print(paste("k =", k))
   
-  k <- ceiling( log(E/S0, base=u) )
-  if (u^k == E/S0)
-    k <- k+1
-  k <- as.integer(ceiling( (n+k)/2) )
-  
-  j <- k:n
+  j <- k:n # sum over every value of j that has an intrinsic value 
   Cj <- choose(n, j) * ( S0 * pp^j * (1-pp)^(n-j) - E/(r)^n * p^j * (1-p)^(n-j) )
-  
+
   return(sum(Cj))
   
 } # binomial_formula 
 
-# 1 
-
+# set the values for this problem 
 S0 <- 50.00 
 E <- 60.00
 u <- 1.2
 d <- 1. / u
-r <- 1.1
-#r <- 0.1
+r <- 1.1 #r <- 0.1
 n <- 10
 
+# d 
 C <- binomial_formula_call(S0=S0, E=E, u=u, d=d, r=r, n=n)
-print(C)
+print("d. the price of the call at t=0")
+print(paste0("C = $", C))
+#round(C, 2)
+
 
 p <- (r-d)/(u-d)
 pp <- (u/r)*p
