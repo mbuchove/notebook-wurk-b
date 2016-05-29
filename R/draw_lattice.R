@@ -1,3 +1,4 @@
+# function to generate the binomial tree lattice, returns a column vector with node values 
 gen_lattice_price <- function(S0=100, u=1.1, d=.9, N=3, E=0, option='call') {
   S <- c()
   S[1] <- S0 - E
@@ -20,7 +21,7 @@ gen_lattice_price <- function(S0=100, u=1.1, d=.9, N=3, E=0, option='call') {
   return(S)
 } # gen_lattice
 
-
+# create a dot file from the lattice, which can be used to draw a picture 
 dot_lattice <- function(S, labels=FALSE) {
   shape <- ifelse(labels == TRUE, "plaintext", "point")
   
@@ -71,9 +72,10 @@ p <- (r-d)/(u-d)
 
 
 lat_prices <- capture.output(dot_lattice
-                             (gen_lattice_price(S0=50, N=3, u=1.06, d=0.95, E=0), labels=TRUE))
+                             (gen_lattice_price(S0=50, N=2, u=1.06, d=0.95, E=0), labels=TRUE))
 cat(lat_prices, 
     file="/Users/mbuchove/Dropbox/Physics/ProbabilityStatistics/Stats_C283/bpm_lattice_2_price.dot")
+
 
 # 3 
 lat_ivals_call <- capture.output(dot_lattice
@@ -86,8 +88,6 @@ lat_ivals_put <- capture.output(dot_lattice(
   labels=TRUE))
 cat(lat_ivals_put, 
     file="/Users/mbuchove/Dropbox/Physics/ProbabilityStatistics/Stats_C283/bpm_lattice_2_ivals_put.dot")
-
-
 
 # process dot files with 
 # dot -Tpng -o lattice_10_nolabel.png -v lattice_10_nolabel.dot 
