@@ -26,5 +26,42 @@ plot(t, S_t, xlab="t(week)", ylab="stock price", main="simulation of stock price
 
 
 # 2 
+S2 <- 50.00
+mu2 <- 0.16
+sig2 <- 0.30
+t2 <- 1/365
+print(paste("the expected stock price at end of next day:", S2+mu2*t2))
+print(paste("the standard deviation of next day stock price:", sig2*sqrt(t2)))
 
 
+# 3 
+S3 <- 38.00
+mu3 <- 0.16
+sig3 <- 0.35 
+t3 <- 1/2
+E3 <- 40.00
+
+
+
+# 4 
+mu4 <- 0.10
+sig4 <- 0.15 
+S4 <- 40.00
+t4 <- 0. 
+T4 <- 2/12 
+term1 <- (mu4-sig4^2/2)*(T4-t4)
+term2 <- 1.96*sig4*sqrt(T4-t4)
+Slow <- S4 * exp(term1 - term2)
+Shigh <- S4 * exp(term1 + term2)
+print("the 95% confidence interval for the stock in 2 months:")
+print(paste(round(Slow,5), "< S(T) <", round(Shigh,5)))
+
+
+# 5 
+
+
+
+
+# 6 
+s1 <- read.csv("http://ichart.finance.yahoo.com/table.csv?s=AAPL&a=01&b=01&c=2016&d=04&e=27&f=2016&g=d&ignore=.csv", 
+               sep=",", header=TRUE)
