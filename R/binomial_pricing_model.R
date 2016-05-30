@@ -16,7 +16,7 @@ binomial_formula_call <- function(S0, E, u, d, r, n){
 
   return(sum(Cj))
   
-} # binomial_formula 
+} # binomial_formula_price 
 
 # set the values for this problem 
 S0 <- 50.00 
@@ -74,10 +74,9 @@ dot_lattice <- function(S, labels=FALSE) {
   shape <- ifelse(labels == TRUE, "plaintext", "point")
   
   cat("digraph G {", "\n", sep="")
-  cat("node[shape=",shape,"];","\n", sep="")
-  cat("rankdir=LR;","\n")
-  
-  cat("edge[arrowhead=none];","\n")
+  cat("node[shape=",shape,"];" , "\n", sep="")
+  cat("rankdir=LR;", "\n")
+  cat("edge[arrowhead=none];", "\n")
   
   # Create a dot node for each element in the lattice
   for (i in 1:length(S)) {
@@ -85,19 +84,18 @@ dot_lattice <- function(S, labels=FALSE) {
   }
   
   # The number of levels in a binomial lattice of length N
-  # is `$\frac{\sqrt{8N+1}-1}{2}$`
+  # solve length(S) = n*(n-1)/2
   L <- ((sqrt(8*length(S)+1)-1)/2 - 1)
   
   k<-1
   for (i in 1:L) {
-    tabs <- rep("\t",i-1)
     j <- i
     while(j>0) {
       cat("node",k,"->","node",(k+i),";\n",sep="")
       cat("node",k,"->","node",(k+i+1),";\n",sep="")
       k <- k + 1
       j <- j - 1
-    }
+    } # loop over nodes in level 
   } # loop over levels 
   
   cat("}", sep="")
@@ -109,37 +107,83 @@ cat(lat_price, file="/Users/mbuchove/Dropbox/Physics/ProbabilityStatistics/Stats
 lat_iv <- capture.output(dot_lattice(gen_lattice_price(S0=50, N=10, u=1.2, d=1./1.2, E=60), labels=TRUE))
 cat(lat_iv, file="/Users/mbuchove/Dropbox/Physics/ProbabilityStatistics/Stats_C283/lattice_10_iv.dot")
 
+# process dot files with 
+# dot -Tpng -o lattice_10_nolabel.png -v lattice_10_nolabel.dot 
+
+
+
 # 2 
-r <- 0.05
+r1 <- 0.05
 # adjust the rate for continous compounding 
-r <- 1+exp(r/4)
+r <- exp(r1/4)
 u <- 1.06
 d <- 0.95
 p <- (r-d)/(u-d)
 
-
-
 lat_prices <- capture.output(dot_lattice
-                             (gen_lattice_price(S0=50, N=2, u=1.06, d=0.95, E=0), labels=TRUE))
+                             (gen_lattice_price(S0=50.00, N=2, u=1.06, d=0.95, E=0), labels=TRUE))
 cat(lat_prices, 
     file="/Users/mbuchove/Dropbox/Physics/ProbabilityStatistics/Stats_C283/bpm_lattice_2_price.dot")
 
 
 # 3 
 lat_ivals_call <- capture.output(dot_lattice
-                                 (gen_lattice_price(S0=50, N=2, u=1.06, d=0.95, E=51.00), labels=TRUE))
+                                 (gen_lattice_price(S0=50.00, N=2, u=1.06, d=0.95, E=51.00), labels=TRUE))
 cat(lat_ivals_call, 
     file="/Users/mbuchove/Dropbox/Physics/ProbabilityStatistics/Stats_C283/bpm_lattice_2_ivals_call.dot")
 
 lat_ivals_put <- capture.output(dot_lattice(
-  gen_lattice_price(S0=50, N=2, u=1.06, d=0.95, E=51.00, option='put'), 
+  gen_lattice_price(S0=50.00, N=2, u=1.06, d=0.95, E=51.00, option='put'), 
   labels=TRUE))
 cat(lat_ivals_put, 
     file="/Users/mbuchove/Dropbox/Physics/ProbabilityStatistics/Stats_C283/bpm_lattice_2_ivals_put.dot")
 
-# process dot files with 
-# dot -Tpng -o lattice_10_nolabel.png -v lattice_10_nolabel.dot 
 
+call_price <- function(lat){ # input lattice, intrinsic values (gen_lattice_price with E specified)
+  n <- length(lat)
+  L <- ((sqrt(8*n+1)-1)/2 - 1) # the number of levels in a binomial tree 
+  ls <- lat[(n-L):n] # the last column of intrinsic values 
+  ln <- c() # start the new lattice to return 
+  #level_call <- local({
+  #  function(l){
+  level_call <- function(l){
+      lt <- c()
+      for(i in 1:(length(l)-1) )
+        lt[i] <- p*l[i] + (1-p)*l[i+1]
+      print(lt)
+      ln <<- c(ln, rev(lt))
+    
+      if(length(lt) > 1)
+        level_call(lt)
+      
+      return(ln)
+  }
+      #ifelse(length(lt) > 1, level_call(lt), return(ln))
+      #level_call(lt)
+    #}
+   #}) # recursively build new levels # end local 
+  #return(ls)
+  return(level_call(ls))
+  
+  #return(ln) 
+} # call price 
 
+f <- call_price(lat)
+f
+lat
+
+#lat <- gen_lattice_price(S0=50.00, N=5, u=1.2, d=1./1.2, E=51.00)
+lat <- gen_lattice_price(S0=50.00, N=2, u=1.06, d=0.95, E=51.00)
+l <- length(lat)
+L <- ((sqrt(8*l+1)-1)/2 - 1) # the number of levels in a binomial tree 
+lat[(l-L):l]
+
+ln
+
+c1 <- c(5, 2)
+c2 <- c(3, 7)
+rev(c(c1, c2))
+
+#call_price(lat)
 
 
