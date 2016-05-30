@@ -29,10 +29,13 @@ plot(t, S_t, xlab="t(week)", ylab="stock price", main="simulation of stock price
 S2 <- 50.00
 mu2 <- 0.16
 sig2 <- 0.30
-t2 <- 1/365
-print(paste("the expected stock price at end of next day:", S2+mu2*t2))
-print(paste("the standard deviation of next day stock price:", sig2*sqrt(t2)))
-
+t2 <- 1/365 # T-t 
+EST <- S2*exp(mu2*t2)
+SST <- S2*exp(mu2*t2)*sqrt(exp(sig2^2*t2)-1)
+print(paste("the expected stock price at end of next day:", EST))
+print(paste("the standard deviation of next day stock price:", SST))
+#EST <- S2+mu2*t2
+#VST <- sig2*sqrt(t2)
 
 # 3 
 S3 <- 38.00
@@ -58,7 +61,11 @@ print(paste(round(Slow,5), "< S(T) <", round(Shigh,5)))
 
 
 # 5 
-
+S5 <- 95.00
+sig5 <- 0.6
+E5 <- 105.00 
+r5 <- 0.08 
+t5 <- 8/12
 
 
 
