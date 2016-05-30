@@ -20,26 +20,26 @@ binomial_formula_call <- function(S0, E, u, d, r, n){
 
 # set the values for this problem 
 S0 <- 50.00 
-E <- 60.00
-u <- 1.2
-d <- 1. / u
-r <- 1.1 #r <- 0.1
-n <- 10
+E1 <- 60.00
+u1 <- 1.2
+d1 <- 1. / u1
+r1 <- 1.1 #r <- 0.1
+n1 <- 10
 
 # d 
-C <- binomial_formula_call(S0=S0, E=E, u=u, d=d, r=r, n=n)
+C <- binomial_formula_call(S0=S0, E=E1, u=u1, d=d1, r=r1, n=n1)
 print("d. the price of the call at t=0")
 print(paste0("C = $", C))
-#round(C, 2)
+
 # now calculate by discounting the expectation of intrinsic value 
-p <- (r-d)/(u-d)
-pp <- (u/r)*p
+p1 <- (r1-d1)/(u1-d1)
+p1p <- (u1/r1)*p1
 k <- 6 # found from above, printed in binomial function 
-j <- k:n # indices to sum over 
-s <- 2*j - n
-iV <- S0 * u^s - E # intrinsic value 
-expVal <- sum( choose(n,j) * p^j * (1-p)^(n-j) * iV )
-Cv <- expVal / r^n 
+j <- k:n1 # indices to sum over 
+s <- 2*j - n1
+iV <- S0 * u1^s - E1 # intrinsic value 
+expVal <- sum( choose(n1,j) * p1^j * (1-p1)^(n1-j) * iV )
+Cv <- expVal / r1^n1
 print("calculated using the discounted expectation of intrinsic value")
 print(paste0("C = $", Cv))
 print("they agree!")
@@ -47,7 +47,7 @@ print("they agree!")
 # b, c - construct lattices 
 
 # function to generate the binomial tree lattice, returns a column vector with node values 
-gen_lattice_price <- function(S0=100, u=1.1, d=.9, N=3, E=0, option='call') {
+gen_lattice_price <- function(S0=100.00, u=1.1, d=1./1.1, N=3, E=0.00, option='call') {
   S <- c()
   S[1] <- S0 - E
   #ifelse
@@ -102,88 +102,83 @@ dot_lattice <- function(S, labels=FALSE) {
 } # dot_lattice
 
 # 1
-lat_price <- capture.output(dot_lattice(gen_lattice_price(S0=50, N=10, u=1.2, d=1./1.2), labels=TRUE))
+lat_price <- capture.output(dot_lattice(gen_lattice_price(S0=S0, N=n1, u=u1, d=d1), labels=TRUE))
 cat(lat_price, file="/Users/mbuchove/Dropbox/Physics/ProbabilityStatistics/Stats_C283/lattice_10_price.dot")
-lat_iv <- capture.output(dot_lattice(gen_lattice_price(S0=50, N=10, u=1.2, d=1./1.2, E=60), labels=TRUE))
+lat_iv <- capture.output(dot_lattice(gen_lattice_price(S0=S0, N=n1, u=u1, d=d1, E=E1), labels=TRUE))
 cat(lat_iv, file="/Users/mbuchove/Dropbox/Physics/ProbabilityStatistics/Stats_C283/lattice_10_iv.dot")
 
 # process dot files with 
 # dot -Tpng -o lattice_10_nolabel.png -v lattice_10_nolabel.dot 
+dot_dir <- "/Users/mbuchove/Dropbox/Physics/ProbabilityStatistics/Stats_C283/"
 
-
-
-# 2 
-r1 <- 0.05
-# adjust the rate for continous compounding 
-r <- exp(r1/4)
-u <- 1.06
-d <- 0.95
-p <- (r-d)/(u-d)
-
-lat_prices <- capture.output(dot_lattice
-                             (gen_lattice_price(S0=50.00, N=2, u=1.06, d=0.95, E=0), labels=TRUE))
-cat(lat_prices, 
-    file="/Users/mbuchove/Dropbox/Physics/ProbabilityStatistics/Stats_C283/bpm_lattice_2_price.dot")
-
-
-# 3 
-lat_ivals_call <- capture.output(dot_lattice
-                                 (gen_lattice_price(S0=50.00, N=2, u=1.06, d=0.95, E=51.00), labels=TRUE))
-cat(lat_ivals_call, 
-    file="/Users/mbuchove/Dropbox/Physics/ProbabilityStatistics/Stats_C283/bpm_lattice_2_ivals_call.dot")
-
-lat_ivals_put <- capture.output(dot_lattice(
-  gen_lattice_price(S0=50.00, N=2, u=1.06, d=0.95, E=51.00, option='put'), 
-  labels=TRUE))
-cat(lat_ivals_put, 
-    file="/Users/mbuchove/Dropbox/Physics/ProbabilityStatistics/Stats_C283/bpm_lattice_2_ivals_put.dot")
-
-
-call_price <- function(lat){ # input lattice, intrinsic values (gen_lattice_price with E specified)
+# function to take the intrinsic values lattice and step backward, creating call prices 
+option_prices <- function(lat, p){ # input lattice, intrinsic values (gen_lattice_price with E specified)
   n <- length(lat)
   L <- ((sqrt(8*n+1)-1)/2 - 1) # the number of levels in a binomial tree 
   ls <- lat[(n-L):n] # the last column of intrinsic values 
+  
   ln <- c() # start the new lattice to return 
-  #level_call <- local({
-  #  function(l){
+  
   level_call <- function(l){
-      lt <- c()
-      for(i in 1:(length(l)-1) )
-        lt[i] <- p*l[i] + (1-p)*l[i+1]
-      print(lt)
-      ln <<- c(ln, rev(lt))
+    lt <- c()
+    for(i in 1:(length(l)-1) )
+      lt[i] <- p*l[i] + (1-p)*l[i+1]
+    ln <<- c(ln, rev(lt))
     
-      if(length(lt) > 1)
-        level_call(lt)
-      
-      return(ln)
+    if(length(lt) > 1)
+      level_call(lt)
+    
+    return(rev(ln))
   }
-      #ifelse(length(lt) > 1, level_call(lt), return(ln))
-      #level_call(lt)
-    #}
-   #}) # recursively build new levels # end local 
-  #return(ls)
+  
   return(level_call(ls))
   
-  #return(ln) 
 } # call price 
 
-f <- call_price(lat)
-f
-lat
 
-#lat <- gen_lattice_price(S0=50.00, N=5, u=1.2, d=1./1.2, E=51.00)
-lat <- gen_lattice_price(S0=50.00, N=2, u=1.06, d=0.95, E=51.00)
-l <- length(lat)
-L <- ((sqrt(8*l+1)-1)/2 - 1) # the number of levels in a binomial tree 
-lat[(l-L):l]
+# 2 / 3 
+r1 <- 0.05
+# adjust the rate for continous compounding 
+r <- exp(r1/4)
+u2 <- 1.06
+d2 <- 0.95
+p2 <- (r-d2)/(u2-d2)
+E2 <- 51.00
+n2 <- 2
 
-ln
+lat_prices <- gen_lattice_price(S0=S0, N=n2, u=u2, d=d2, E=0.00)
+dot_prices <- capture.output(dot_lattice(lat_prices, labels=TRUE))
+cat(dot_prices, file=paste0(dot_dir, "bpm_lattice_2_price.dot") )
 
-c1 <- c(5, 2)
-c2 <- c(3, 7)
-rev(c(c1, c2))
 
-#call_price(lat)
+# 2, call 
+lat_ivals_call <- gen_lattice_price(S0=S0, N=n2, u=u2, d=d2, E=E2)
+dot_ivals_call <- capture.output(dot_lattice(lat_ivals_call, labels=TRUE))
+cat(dot_ivals_call, file=paste0(dot_dir, "bpm_lattice_2_ivals_call.dot") ) 
+
+lat_callprices <- option_prices(lat_ivals_call, p2 )
+dot_callprices <- capture.output(dot_lattice(lat_callprices, labels=TRUE))
+cat(dot_callprices, file=paste0(dot_dir, "bpm_lattice_2_callprices.dot") )
+
+C0 <- lat_callprices[1]
+print(paste0("the value of the 6 month call is $", C0))
+
+
+# 3, put 
+lat_ivals_put <- gen_lattice_price(S0=S0, N=n2, u=u2, d=d2, E=E2, option='put')
+dot_ivals_put <- capture.output(dot_lattice(lat_ivals_put, labels=TRUE))
+cat(lat_ivals_put, file=paste0(dot_dir, "bpm_lattice_2_ivals_put.dot") )
+
+lat_putprices <- option_prices(lat_ivals_put, p2)
+dot_putprices <- capture.output(dot_lattice(lat_putprices, labels=TRUE))
+cat(dot_putprices, file=paste0(dot_dir, "bpm_lattice_2_putprices.dot") )
+
+P0 <- lat_putprices[1]
+print(paste0("the value of the 6 month put is $", P0))
+
+print("check for put-call parity:")
+print(paste("C + E/e^(2rt) =", C0 + E2/exp(2*r1*1/4) ))
+print(paste("P + S0 =", P0 + S0 ))
+
 
 
