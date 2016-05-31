@@ -49,9 +49,8 @@ print("they agree!")
 # function to generate the binomial tree lattice, returns a column vector with node values 
 gen_lattice_price <- function(S0=100.00, u=1.1, d=1./1.1, N=3, E=0.00, option='call') {
   S <- c()
-  S[1] <- S0 - E
-  #ifelse
-  if(S[1] < 0)
+  ifelse(option=='call', S[1]<-S0-E, S[1]<-E-S0)
+  if(S[1] < 0) # if stock price falls below exercise price, call is worthless
     S[1] = 0 
   count <- 2
   
@@ -103,12 +102,12 @@ dot_lattice <- function(S, labels=FALSE) {
 
 # 1
 lat_price <- capture.output(dot_lattice(gen_lattice_price(S0=S0, N=n1, u=u1, d=d1), labels=TRUE))
-cat(lat_price, file="/Users/mbuchove/Dropbox/Physics/ProbabilityStatistics/Stats_C283/lattice_10_price.dot")
+cat(lat_price, file="/Users/mbuchove/Dropbox/Physics/ProbabilityStatistics/Stats_C283/bpm_lattice_10_price.dot")
 lat_iv <- capture.output(dot_lattice(gen_lattice_price(S0=S0, N=n1, u=u1, d=d1, E=E1), labels=TRUE))
-cat(lat_iv, file="/Users/mbuchove/Dropbox/Physics/ProbabilityStatistics/Stats_C283/lattice_10_iv.dot")
+cat(lat_iv, file="/Users/mbuchove/Dropbox/Physics/ProbabilityStatistics/Stats_C283/bpm_lattice_10_iv.dot")
 
 # process dot files with 
-# dot -Tpng -o lattice_10_nolabel.png -v lattice_10_nolabel.dot 
+# dot -Tpng -o bpm_lattice_10_prices.png -v bpm_lattice_10_prices.dot 
 dot_dir <- "/Users/mbuchove/Dropbox/Physics/ProbabilityStatistics/Stats_C283/"
 
 # function to take the intrinsic values lattice and step backward, creating call prices 
@@ -167,7 +166,7 @@ print(paste0("the value of the 6 month call is $", C0))
 # 3, put 
 lat_ivals_put <- gen_lattice_price(S0=S0, N=n2, u=u2, d=d2, E=E2, option='put')
 dot_ivals_put <- capture.output(dot_lattice(lat_ivals_put, labels=TRUE))
-cat(lat_ivals_put, file=paste0(dot_dir, "bpm_lattice_2_ivals_put.dot") )
+cat(dot_ivals_put, file=paste0(dot_dir, "bpm_lattice_2_ivals_put.dot") )
 
 lat_putprices <- option_prices(lat_ivals_put, p2)
 dot_putprices <- capture.output(dot_lattice(lat_putprices, labels=TRUE))
@@ -180,5 +179,9 @@ print("check for put-call parity:")
 print(paste("C + E/e^(2rt) =", C0 + E2/exp(2*r1*1/4) ))
 print(paste("P + S0 =", P0 + S0 ))
 
-
-
+# 4 - American option
+#American_option <- function(call_vals, intrinsic_vals){}
+#Anode[i] <- max(call_vals[i], intrinsic_vals[i])
+Pamerican <- p2 * max(lat_putprices[2], lat_ivals_put[2]) + (1-p2) * max(lat_putprices[3], lat_ivals_put[3])
+cat("the value of the American put option is $", Pamerican, sep='')
+cat("it is optimal to exercise early if the first step is a down step")
