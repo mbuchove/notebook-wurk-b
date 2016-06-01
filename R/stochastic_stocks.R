@@ -1,5 +1,8 @@
 # HW 6 
 
+# define a function for cleaner printing
+catn <- function(...){cat(..., "\n", sep='')}
+
 # 1
 # distribution of stock during single time interval 
 # assume it follows a Wiener process 
@@ -10,8 +13,10 @@ sig <- 0.25 # standard deviation of price
 n <- 52
 dt <- 1. / n # delta t is one week 
 
-mean <- mu*dt
-sd <- sig*sqrt(dt)
+mean <- mu*dt # the mean return of the stock 
+sd <- sig*sqrt(dt) # the sd of return in dt 
+catn("the return stock in 1 week will follow a normal distribution with ")
+catn("mean = ", mean, " and standard deviation = ", sd)
 x <- seq(mean-3*sd, mean+3*sd, length=100)
 R <- dnorm(x, mean=mean, sd=sd) 
 plot(x, R, xlab="return", ylab="density", main="return of stock during 1 week")
@@ -37,11 +42,8 @@ stdev_price <- function(t, sig=0.5, mu=0.1, S=100.00){
 } # calculate standard deviation of price of stock in future 
 EST <- expected_price(t2, mu2, S2)
 SST <- stdev_price(t2, sig2, mu2, S2)
-catn <- function(...){cat(..., "\n", sep='')}
 catn("the expected stock price at end of next day: ", EST)
 catn("the standard deviation of next day stock price: ", SST)
-#EST <- S2+mu2*t2
-#VST <- sig2*sqrt(t2)
 
 
 # 3 
@@ -50,8 +52,11 @@ mu3 <- 0.16
 sig3 <- 0.35 
 t3 <- 1/2
 E3 <- 40.00
-#use pnorm(s, mean, sd) to find the probability the stock will fall below the exercise price
-p_put <- pnorm(E3, expected_price(t3, mu3, S3), stdev_price(t3, sig3, mu3, S3))
+M3 <- (mu3-sig3^2/2)*t3+log(S3) # this is just the log of the expectation of mean
+Sig3 <- sig3*sqrt(t3) # this is the standard deviation in the future
+#use pnorm(ln(s), ln(mean), ln(sd)) to find the probability the stock will fall below the exercise price
+#p_put <- pnorm(log(E3), log(expected_price(t3, mu3, S3)), log(stdev_price(t3, sig3, mu3, S3)))
+p_put <- pnorm(log(E3), M3,  Sig3) # the normal distribution, but with prices in ln space 
 p_call <- 1 - p_put
 catn("there is a ", round(p_call*100, 5), "% chance that the call will be exercised")
 catn("and there is a ", round(p_put*100, 5), "% chance that the put will be exercised")
@@ -84,7 +89,7 @@ E5 <- 105.00
 r5 <- 0.08 
 t5 <- 8/12
 
-d1 <- (log(S5/E5) + (r+sig5^2/2)*t5) / (sig5*sqrt(t5))
+d1 <- (log(S5/E5) + (r5+sig5^2/2)*t5) / (sig5*sqrt(t5))
 # d2 = (ln(S0/E) + (r-1/2*sig^2)*t) / (sig*sqrt(t))
 d2 <- d1 - sig5*sqrt(t5)
 # Phi is the cumulative distribution function of the standard normal distribution 
@@ -95,13 +100,7 @@ catn("the value of the call calculated with the Black-Scholes model is $", round
 # 6 
 sA <- read.csv("http://ichart.finance.yahoo.com/table.csv?s=AAPL&a=01&b=01&c=2016&d=04&e=27&f=2016&g=d&ignore=.csv", 
                sep=",", header=TRUE)
-rA <- (sA$Adj.Close[-length(sA)] - sA$Adj.Close[-1]) / (sA$Adj.Close[-1])
-rA
-(sA$Adj.Close[-length(sA)] - sA$Adj.Close[-1])
-#r1 <- (a$P1[-data_len] - a$P1[-1]) / (a$P1[-1])
-sA
-sA$Adj.Close
-sA$Adj.Close[-length(sA)]
-sA$Adj.Close[-1]
-
- 
+rA <- (sA$Adj.Close[-length(sA$Adj.Close)] - sA$Adj.Close[-1]) / (sA$Adj.Close[-1])
+sd82 <- sqrt(var(rA)) # the standard deviation of 82 days 
+sd_annual <- sd82 * sqrt(365/82)
+catn("the annual volatility of Apple is ", sd_annual)
