@@ -232,5 +232,3 @@ diff_ret <- avg_ret_perf - ( Rf + (mkt_avg-Rf) * sig_port/sig_mkt )
 names(diff_ret) <- portfolio_names
 print("differential returns with risk measured by standard deviation")
 print(diff_ret)
-
-
