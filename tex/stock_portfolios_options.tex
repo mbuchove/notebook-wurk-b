@@ -1,17 +1,17 @@
 \documentclass[]{amsart}
 
 \usepackage{amsmath}
+\usepackage{microtype}
 
 \newcommand{\p}[1]{\left(#1\right)}
 \newcommand{\bs}[1]{\boldsymbol{#1}}
-
+%\newcommand{\eq}[1]{$$ #1 $$}
 
 \begin{document}
 
 
 \section{Portfolio Pricing Models}
 \subsection{Multi Group Model}
-
 	
 $$ A_{ij} = \frac{N_i \rho_{ij}}{1-\rho_{ii}} + \delta_{ij} $$ 
 $\delta_{ij}$ is the Kronecker delta 
@@ -24,14 +24,39 @@ $$ z_i = \frac{1}{\sigma_i \p{1-\rho_{kk}}} \left[ \frac{\bar{R_i}-R_f}{\sigma_i
 where $k$ denotes the industry 
 $$ x_i = \frac{z_i}{\lambda} $$ 
 not proven: p denotes optimal portfolio 
-$$ \lambda = \frac{\bar{R}_p-R_f}{\sigma_p^2} $$ 
 
+\begin{align*}
+ \lambda &= \frac{\bar{R}_p-R_f}{\sigma_p^2} \\
+  			 &= \sum_{i=0}^n z_i 
+\end{align*}
 
+% multi group model 
 
+%\subsubsection{}
+\subsection{Performance Measures} 
+(ratios)
 
+Sharpe ratio:
+$$ S = \frac{\bar{R}_p - R_f}{\sigma_p} $$
+
+Treynor measure (ratio):
+$$ T = \frac{\bar{R}_p - R_f}{\beta_p} $$  
+
+Jensen's alpha (performance index):
+$$ \alpha_J = \bar{R}_p - \left[R_f + \beta_p \cdot (R_M - R_f) \right] $$
+
+Differential return with risk measured by standard deviation:
+$$ \Delta R = \bar{R}_p - \left( R_f + \frac{R_M-R_f}{\sigma_M}\sigma_p \right) $$ 
 
 \section{Options}
-\subsection{European Options}
+\subsection{Pricing European options} \hspace{0.1\textwidth} \newline
+the "risk-neutral" probability:
+$$ p = \frac{r-u}{u-d} $$ 
+$$ r_t = e^{rt} $$ if $r$ is compounded continously 
+
+
+\subsection{European Option bounds} only exercised on expiry date
+
 Lower bound for European call:
 $$ C \geq S_0 - \frac{E}{1+r} $$ 
 
