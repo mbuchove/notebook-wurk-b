@@ -73,16 +73,13 @@ def answer(t, n):
         elif b == n:
             return 1
         else:
-            if (t, n, b) in dat.rd and dat.rec:
+            if (t, n, b) in dat.rd:
                 return dat.rd[(t, n, b)]
             else:
                 v = rec(t - 1, n, b - 1) + rec(t - 1, n, b) + rec(t - 1, n, b + 1)
-                if dat.rec:
-                    dat.rd[(t, n, b)] = v
+                dat.rd[(t, n, b)] = v
                 return v
 
-    if dat.rec:
-        print(dat.rd)
     return rec(t, n, 1)  # % 123454321
     # end answer(t, n)
 
@@ -96,7 +93,7 @@ def answer(t, n):
 #if answer(3, 2) == 3 print('passed') else print('failed')
 
 
-t = 500
+t = 1000
 n = 250
 
 print(answer(t, n))
