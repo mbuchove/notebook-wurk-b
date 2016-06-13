@@ -58,33 +58,31 @@ def answer(t, n):
     """t rolls, n spaces on board"""
 
     class dat:
-        # c = 0
+        rec = True
         rd = dict()
 
     def rec(t, n, b):
         """b is current board space"""
 
-        if (t, n, b) in dat.rd:
-            # print(dat.rd[(t, n, b)])
-            return dat.rd[(t, n, b)]
-
-        elif b < 1 or b > n or t + b < n:
-            v = 0
+        if b < 1 or b > n or t+b < n:
+            return 0
+        elif t + b == n:
+            return 1
         elif t == 0:
-            if b == n:
-                v = 1
-            else:
-                v = 0
+            return 0
+        elif b == n:
+            return 1
         else:
-            if b == n:
-                v = 1
-
+            if (t, n, b) in dat.rd and dat.rec:
+                return dat.rd[(t, n, b)]
             else:
                 v = rec(t - 1, n, b - 1) + rec(t - 1, n, b) + rec(t - 1, n, b + 1)
+                if dat.rec:
+                    dat.rd[(t, n, b)] = v
+                return v
 
-            dat.rd[(t, n, b)] = v
-        return v
-
+    if dat.rec:
+        print(dat.rd)
     return rec(t, n, 1)  # % 123454321
     # end answer(t, n)
 
@@ -94,8 +92,11 @@ def answer(t, n):
    # return S % 123454321
 
 
-if answer(1, 2) == 1 print('passed') else print('failed')
-if answer(3, 2) == 3 print('passed') else print('failed')
+#if answer(1, 2) == 1 print('passed') else print('failed')
+#if answer(3, 2) == 3 print('passed') else print('failed')
 
 
+t = 500
+n = 250
 
+print(answer(t, n))
