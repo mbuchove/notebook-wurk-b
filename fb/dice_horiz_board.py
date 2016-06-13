@@ -58,30 +58,52 @@ def answer(t, n):
     """t rolls, n spaces on board"""
 
     class dat:
-        rec = True
+        """data to hold through recursive calls"""
         rd = dict()
+    # data
+
+    def num_return(s, n, b):
+        """return number of ways to return back to original spot"""
+        if s == 1:
+            return 1
+        elif s == 2:
+            c = 0
+            if b > 1:
+                c += 1
+            if b < n:
+                c += 1
+            return c
+        else: # filler
+            return 1
+    # num_return
+
 
     def rec(t, n, b):
         """b is current board space"""
 
+        # if success is no longer possible
         if b < 1 or b > n or t+b < n:
             return 0
+        # successful end of game
         elif t + b == n:
             return 1
+        # game over, failed
         elif t == 0:
             return 0
+        # once end is reached, only way to succeed is to stay every roll
         elif b == n:
             return 1
-        else:
+        else: # first check dictionary for value
             if (t, n, b) in dat.rd:
                 return dat.rd[(t, n, b)]
-            else:
+            else: # add number of possibilities for each of next roll 
                 v = rec(t - 1, n, b - 1) + rec(t - 1, n, b) + rec(t - 1, n, b + 1)
-                dat.rd[(t, n, b)] = v
+                dat.rd[(t, n, b)] = v # store value
                 return v
+    # rec(s, n, b):
 
     return rec(t, n, 1)  # % 123454321
-    # end answer(t, n)
+# end answer(t, n)
 
 
 
