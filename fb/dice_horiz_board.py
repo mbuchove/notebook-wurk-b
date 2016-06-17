@@ -1,3 +1,4 @@
+from math import factorial, floor
 
 def perf_2_n_recurs(t, fun):
     """meant to be general, incomplete"""
@@ -18,6 +19,20 @@ def perf_2_n_recurs(t, fun):
     rec(t, i, n)
 
 
+def upper_limit(t, n, b):
+    """the maximum number of valid combination, ignoring rules that lose the game"""
+    count = 0
+    for N_1 in xrange(n-b, int(floor((t+n-b)/2 + 1))):
+        N_n1 = N_1 + b - n
+        N_0 = t - N_1 - N_n1
+        count += factorial(N_1 + N_n1 + N_0)/(factorial(N_1)*factorial(N_n1)*factorial(N_0))
+        print(N_1, N_n1, N_0)
+    return count
+
+print(upper_limit(5, 3, 1))
+
+
+# upper_limit(t, n, b)
 
 def test_all_outcomes(t, n):
     """t rolls, n spaces on board"""
@@ -60,6 +75,7 @@ def answer(t, n):
     class dat:
         """data to hold through recursive calls"""
         rd = dict()
+        nd = dict()
     # data
 
     def num_return(s, n, b):
@@ -77,6 +93,7 @@ def answer(t, n):
         else: # filler
             return 1
 
+        #free_rolls = s - n + b  # number of rolls that could be burned and still win
         #s = t - n + b
         max_pairs = (s - s % 2) // 2  # find min of this and allowable double forwards or double-backs
         max_back = b - 1
@@ -87,9 +104,7 @@ def answer(t, n):
             num_zeros = s - 2 * num_pairs
             count += factorial(s) / (factorial(num_zeros) * factorial(num_pairs) ** 2)
         return count
-
-
-    # num_return
+    # num_return(s, n, b)
 
 
     def rec(t, n, b):
@@ -112,7 +127,7 @@ def answer(t, n):
             if (t, n, b) in dat.rd:
                 return dat.rd[(t, n, b)]
             else: # add number of possibilities for each of next roll
-                free_rolls = s - n + b  # number of rolls that could be burned and still win
+                free_rolls = t - n + b  # number of rolls that could be burned and still win
 #                for s in
 
                 v = rec(t - 1, n, b - 1) + rec(t - 1, n, b) + rec(t - 1, n, b + 1)
@@ -139,3 +154,11 @@ t = 500
 n = 250
 
 print(answer(t, n))
+
+def answer(t, n):
+    """t rolls, n spaces on board"""
+
+
+
+
+
