@@ -29,10 +29,6 @@ def upper_limit(t, n, b):
         print(N_1, N_n1, N_0)
     return count
 
-print(upper_limit(5, 3, 1))
-
-
-# upper_limit(t, n, b)
 
 def test_all_outcomes(t, n):
     """t rolls, n spaces on board"""
@@ -69,7 +65,7 @@ def test_all_outcomes(t, n):
     return count.c % 123454321
 
 
-def answer(t, n):
+def answer2(t, n):
     """t rolls, n spaces on board"""
 
     class dat:
@@ -142,6 +138,48 @@ def answer(t, n):
 
 
 
+def answer(t, n):
+    """t rolls, n spaces on board"""
+
+    mod = 123454321
+
+    unique_games = [0] * n
+    unique_games[n-1] = 1
+    prev = [0] * n
+
+    # dynamic approach
+    # iterate through the moves, r is roll
+    for r in xrange(0, t):
+
+        # update previous, swap
+        temp = prev
+        prev = unique_games
+        unique_games = temp
+
+        # iterate through squares in board
+        for s in xrange(0, n):
+            unique_games[s] = prev[s]
+
+            # don't move if it's the end square
+            if s == n - 1:
+                continue
+
+            if s != 0: # left move is not possible on the first square
+                unique_games[s] += prev[s-1]
+
+            unique_games[s] += prev[s+1]
+
+        # loop through board
+    # for loop through moves
+
+    return unique_games[0] % mod
+
+# answer(t, n)
+
+print(upper_limit(5, 3, 1))
+
+
+# upper_limit(t, n, b)
 
    # return S % 123454321
 
@@ -150,15 +188,11 @@ def answer(t, n):
 #if answer(3, 2) == 3 print('passed') else print('failed')
 
 
-t = 500
-n = 250
+ar = (500, 250)
 
-print(answer(t, n))
+print(answer(*ar))
 
-def answer(t, n):
-    """t rolls, n spaces on board"""
-
-
-
+#print(test_all_outcomes(*ar))
+print(answer2(*ar))
 
 
