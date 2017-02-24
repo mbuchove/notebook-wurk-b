@@ -1,4 +1,4 @@
-#include "DynamicIntArray.h"
+#include "dynamic_int_array.h"
 
 namespace cs20a {
 
@@ -9,7 +9,7 @@ namespace cs20a {
 
   }
 
-  explicit DynamicIntArray(int size){
+  DynamicIntArray::DynamicIntArray(int size){
     used = 0;
     capacity = size;
     //elements
@@ -28,6 +28,7 @@ namespace cs20a {
   std::ostream& operator << (std::ostream& outs, const DynamicIntArray& d){
     // doesn't specify what output should look like, using a placeholder for now 
     outs << d.capacity;
+    return outs;
   }
 
   bool operator ==(const DynamicIntArray &d1, const DynamicIntArray &d2){

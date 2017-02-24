@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "DynamicIntArray.h"
+#include "dynamic_int_array.h"
 
 using namespace std;
 using namespace cs20a;
