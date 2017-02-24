@@ -151,6 +151,8 @@ def answer(t, n):
     # iterate through the moves, r is roll
     for r in xrange(0, t):
 
+        print(unique_games)
+
         # update previous, swap
         temp = prev
         prev = unique_games
@@ -172,27 +174,20 @@ def answer(t, n):
         # loop through board
     # for loop through moves
 
-    return unique_games[0] % mod
-
-# answer(t, n)
-
-print(upper_limit(5, 3, 1))
+    return unique_games[0] #% mod
 
 
-# upper_limit(t, n, b)
-
-   # return S % 123454321
+#print(upper_limit(5, 3, 1))
 
 
-#if answer(1, 2) == 1 print('passed') else print('failed')
-#if answer(3, 2) == 3 print('passed') else print('failed')
+#assert( answer(1, 2) == 1 )
+#assert( answer(3, 2) == 3 )
 
-
-ar = (500, 250)
+ar = (10, 4)
 
 print(answer(*ar))
 
 #print(test_all_outcomes(*ar))
-print(answer2(*ar))
+#print(answer2(*ar))
 
 

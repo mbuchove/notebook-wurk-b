@@ -1,31 +1,84 @@
 import math
 import random
+# to be run in python 3 for print function to work
 
 def print_matrix(matrix):
     for row in reversed(matrix):
         print(row)
 
-def binary_search_x(matrix, xmin, xmax, y):
+def binary_search_x(matrix, xmin, xmax, y, upperval):
+    """find the edge 1 in the transition from 0s to 1s"""
+
+    xmid = (int)(xmin+xmax)//2
+    xlo = xmin
+    xhi = xmax
+    if upperval == 1:
+        add = 1
+    else:
+        add = -1
+
+    while matrix[y][xmid] == matrix[y][xmid+1]:
+        if xmid == xmin or xmid == xmax:
+            return xmid
+        if matrix[y][xmid] == upperval:
+            xhi = xmid
+        else:
+            xlo = xmid
+        xmid = (int)(xlo+xhi)//2
+
+    if matrix[y][xmid] == 1:
+        return xmid
+    elif matrix[y][xmid] == 0:
+        return xmid + 1
+
+    return -1 # should never happen
+
+def binary_search_xlo(matrix, xmin, xmax, y):
     """find the edge 1 in the transition from 0s to 1s"""
     xmid = (int)(xmin+xmax)//2
+    xlo = xmin
+    xhi = xmax
     while matrix[y][xmid] == matrix[y][xmid+1]:
-        if xmid == 0:
-            return 0
+        if xmid == xmin or xmid == xmax:
+            return xmid
         if matrix[y][xmid] == 1:
-            xmax = xmid
+            xhi = xmid
         else:
-            xmin = xmid
-        xmid = (int)(xmin+xmax)//2
+            xlo = xmid
+        xmid = (int)(xlo+xhi)//2
 
-    return xmid + 1
+    if matrix[y][xmid] == 1:
+        return xmid
+    elif matrix[y][xmid] == 0:
+        return xmid + 1
 
-def binary_search_x2(matrix, xmin, xmax, y):
-    while xmin < xmax:
+    return -1 # should never happen
+
+def binary_search_xhi(matrix, xmin, xmax, y):
+    """find the edge 1 in the transition from 0s to 1s"""
+    xmid = (int)(xmin+xmax)//2
+    xlo = xmin
+    xhi = xmax
+    while matrix[y][xmid] == matrix[y][xmid-1]:
+        if xmid == xmin or xmid == xmax:
+            return xmid
+        if matrix[y][xmid] == 0:
+            xhi = xmid
+        else:
+            xlo = xmid
+        xmid = (int)(xlo+xhi)//2
+
+    if matrix[y][xmid] == 1:
+        return xmid
+    elif matrix[y][xmid] == 0:
+        return xmid - 1
+
+    return -1 # should never happen
 
 
 
 def check_quadrants(matrix):
-    """"""
+    """efficient algorithm for finding any marked 1 in a grid """
 
     ysize = len(matrix)
     xsize = len(matrix[0])
@@ -40,12 +93,12 @@ def check_quadrants(matrix):
         for i in range(0, xsize, dx):
             for j in range(0, ysize, dy):
                 if matrix[j][i] == 1:
-                    print i, j
+                    print( i, j )
                     return i, j
         n += 1
         f = 2 ** n
 
-    print "couldn't find"  # this should never happen
+    print ("couldn't find")  # this should never happen
     return xsize - 1, ysize - 1
 
 
@@ -67,7 +120,7 @@ def find_box(matrix):
     #    if matrix[y][i] == 1:
     #        xbl = i
     #        break
-    xbl = binary_search_x(matrix, 0, x, y)
+    xbl = binary_search_xlo(matrix, 0, x, y)
 
 
     ybl = y
@@ -81,6 +134,7 @@ def find_box(matrix):
         if matrix[y][i] == 1:
             xtr = i
             break
+    xtr = binary_search_xhi(matrix, x, xsize-1, y)
 
     ytr = y
     for j in range(ysize - 1, y, -1):
@@ -135,7 +189,7 @@ ybl = random.randint(0, h - 1)
 xtr = random.randint(xbl, w - 1)
 ytr = random.randint(ybl, h - 1)
 
-print w, h, xbl, ybl, xtr, ytr
+print (w, h, xbl, ybl, xtr, ytr)
 matrix = create_matrix(w, h, xbl, ybl, xtr, ytr)
 
 x1, y1, x2, y2 = find_box(matrix)
@@ -143,8 +197,8 @@ x1, y1, x2, y2 = find_box(matrix)
 for row in reversed(matrix):
     print(row)
 
-print xbl, ybl, xtr, ytr
-print x1, y1, x2, y2
+print (xbl, ybl, xtr, ytr)
+print (x1, y1, x2, y2)
 
 
 assert(x1 == xbl)
@@ -168,6 +222,6 @@ overlap = add_box_to_matrix(matrix, xbl, ybl, xtr, ytr)
 
 print_matrix(matrix)
 
-print xbl, ybl, xtr, ytr
+print (xbl, ybl, xtr, ytr)
 
 print(overlap)

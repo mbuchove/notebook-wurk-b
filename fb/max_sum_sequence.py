@@ -1,5 +1,5 @@
 def maxSequenceSum(seq, maxsize):
-    """returns the sum of any subsequence of list, length maxsize or less """
+    """returns the sum of any subsequence of seq, length maxsize or less """
 
     l = len(seq)
     maxsum = max(seq)
@@ -24,6 +24,17 @@ def maxSequenceSum(seq, maxsize):
 #    if maxsize > length(seq):
         #fail
 
+def maxsum_subsequence(seq, maxsize):
+    """returns the sum of any subsequence of seq, length maxsize or less """
+
+    maximum = max_ending_here = 0
+
+    for s in seq:
+        max_ending_here = max(0, max_ending_here + s)
+        maximum = max(max_ending_here, maximum)
+        print(str(s)+' '+str(max_ending_here)+' '+str(maximum))
+
+    return
 
 L = [-100, 95, 86, 47]
 k = 3
@@ -38,6 +49,10 @@ if (maxSequenceSum(L, k) == 131):
     print("success 2")
 else:
     print("fail 2")
+
+
+maxsum_subsequence(L, k)
+
 
 from random import randint
 
