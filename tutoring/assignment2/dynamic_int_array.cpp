@@ -2,27 +2,51 @@
 
 namespace cs20a {
 
-  int growth_factor = 20;
+  int growth_factor = 2;
 
   DynamicIntArray::DynamicIntArray(){
     used = 0;
-    capacity = 2;
-    //elements = NULL;
-    //elements = (int*)malloc(capacity*sizeof(int));
+    capacity = 0;
     
-    elements = new int[capacity];
-  }
+    elements = NULL;
+  } // default constructor 
 
   DynamicIntArray::DynamicIntArray(int size){
     used = 0;
     capacity = size;
-    elements = (int*)malloc(size*sizeof(int));
-  }
+    elements = new int[capacity];
+  } // explicit constructor 
 
+  DynamicIntArray::DynamicIntArray(const DynamicIntArray & d)
+  {
+    capacity = d.capacity;
+    used = d.used;    
+    elements = new int[capacity];
+    
+    for (int i=0; i<used; i++)
+      elements[i] = d.elements[i];
+  } // copy constructor 
+
+  DynamicIntArray& DynamicIntArray::operator= (const DynamicIntArray& rhs)
+  {
+    used = rhs.used;
+    capacity = rhs.capacity;
+
+    int* old_elements = elements;
+    elements = new int[capacity];
+    
+    for (int i=0; i<used; i++)
+      elements[i] = rhs.elements[i];
+
+    delete old_elements;
+
+    return *this;
+
+  } // assignment operator 
 
   DynamicIntArray::~DynamicIntArray(){
     delete elements;
-  }
+  } // destructor 
 
 
   bool DynamicIntArray::isEmpty() const{
@@ -31,26 +55,20 @@ namespace cs20a {
 
   int DynamicIntArray::getCapacity() const{
     return capacity;
-  }
+  } // accessor 
 
   int DynamicIntArray::getUsed() const{
     return used;
-  }
+  } // accessor 
 
 
   int& DynamicIntArray::operator [](int i) {
-    //return *(elements + i*sizeof(int));
     return elements[i];
   }
 
   std::ostream& operator <<(std::ostream& outs, const DynamicIntArray& d){
-    outs << d.capacity << std::endl;
-    //int* ep = d.elements;
     for(int i=0; i<d.used; i++)
-      outs << d[i] << " ";
-      //outs << *(d.elements + i*sizeof(int)) << " ";
-    //outs << *ep << " ";
-    //ep += sizeof(int);
+      outs << d.elements[i] << " ";
     return outs;
   }
 
@@ -62,7 +80,7 @@ namespace cs20a {
 
     for (int i=0; i < d1.used; i++)
 
-      if (*(d1.elements + i*sizeof(int)) != *(d2.elements + i*sizeof(int)))
+      if (d1.elements[i] != d2.elements[i])
 
         return false;
 
@@ -72,60 +90,48 @@ namespace cs20a {
 
   void DynamicIntArray::add(int element){
     if (used >= capacity) {
-
-      // create new memory allocation 
-      if (capacity > 0)
-	capacity *= growth_factor;
-      else
-	capacity += growth_factor;
-
-      int *old_elements = elements;
-      //elements = (int*)malloc(capacity*sizeof(int)); 
-
-      
-
-      std::cout << "reallocating " << capacity << std::endl;
-      int *new_elements = (int*)realloc(elements, capacity*sizeof(int));
-      std::cout << "allocated " << new_elements << std::endl;
-      if (new_elements != NULL)
-	elements = new_elements; 
-      else
-	{
-	  //free(elements);
-	  printf("Error allocating memory!\n");
-	  exit( 1) ;
-	}
-
-      /*
-      //copy the old data
-      for(int i=0; i<used; i++){
-	*(new_elements + i*sizeof(int)) = *(old_elements + i*sizeof(int));
-      }
-      std::cout << "copied " << used << " now freeing.." << std::endl;
-      //clear the old memory
-      free(old_elements);
-      elements = new_elements;
-      */
+      expandCapacity();
     } // if used >= capacity 
 
     //add the new element
-    std::cout << "about to set new element" << std::endl;
-    (*this)[used] = element;
-    std::cout << "set new element " << used << std::endl;
+    elements[used] = element;
+    //(*this)[used] = element;
     used++;
 
   } // add 
 
 
+  void DynamicIntArray::insert(int i, int element)
+  {
+    if (used >= capacity) {
+      expandCapacity();
+    } // if used >= capacity 
+    
+    // shift everything to the right of i 1 spot to the right 
+    for(int j=used-1; j>i-1; j--)
+      {
+	elements[j+1] = elements[j];
+      }
+
+    // set new element 
+    elements[i] = element;
+    used++;
+    
+  } // insert 
 
   int DynamicIntArray::remove(int i){
-    int val = *(elements + i*sizeof(int));
+    if (i>used-1 || i<0)
+      {
+	return 0;
+      }
+    
+    int val = elements[i];
 
     // shift everything right of i 1 index left 
     for (int j=i; j<used-1; j++)
-      *(elements + j*sizeof(int)) = *(elements + (j+1)*sizeof(int));
+      elements[j] = elements[j+1];
 
-    used -= 1;
+    used--;
 
     return val;
 
@@ -133,11 +139,37 @@ namespace cs20a {
 
   void DynamicIntArray::clear(){
     for(int i=0; i<used; i++){
-      *(elements + i*sizeof(int)) = 0;
+      elements[i] = 0;
     }
     used = 0;
-    //free(elements);
+    //delete elements;
     //capacity = 0;
     //elements = NULL;
   }
-}
+
+  void DynamicIntArray::expandCapacity()
+  {
+    // create new memory allocation 
+    if (capacity > 0)
+      capacity *= growth_factor;
+    else
+      capacity += growth_factor;
+    
+    // create new larger array 
+    int *old_elements = elements;      
+    elements = new int[capacity];
+    if ( !elements)
+      {
+	delete old_elements;
+	printf("Error allocating memory!\n");
+	exit( 1) ;
+      } // check if new allocation failed 
+    
+    // copy values of array 
+    for(int i=0; i<used; i++)
+      elements[i] = old_elements[i];
+    
+    delete old_elements;
+  } // expandCapacity 
+  
+} // end namespace cs20a

@@ -18,7 +18,7 @@ int main()
 	for (int i = 0; i < 10; i++) d1.add(i*i);
 	display(d1, "Starting array:");
 
-	/*
+       
 	d1.insert(2, 999999);
 	display(d1, "insert(2, 999999);");
 
@@ -62,15 +62,6 @@ int main()
 
 	d3.clear();
 	display(d3, "d3.clear();");
-
-	*/
-
-	DynamicIntArray d3 = DynamicIntArray(10);
-	
-	d3[2] = 5;
-	cout << d3 << endl;
-	cout << d3[2] << endl;
-
 
 	if (d3.isEmpty())
 		cout << "d3 is empty" << endl << endl;
