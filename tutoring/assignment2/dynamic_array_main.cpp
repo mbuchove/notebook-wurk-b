@@ -15,9 +15,10 @@ int main()
 
 	
 	
-	/*	for (int i = 0; i < 10; i++) d1.add(i*i);
+	for (int i = 0; i < 10; i++) d1.add(i*i);
 	display(d1, "Starting array:");
 
+	/*
 	d1.insert(2, 999999);
 	display(d1, "insert(2, 999999);");
 
