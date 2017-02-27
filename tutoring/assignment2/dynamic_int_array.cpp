@@ -20,6 +20,28 @@ namespace cs20a {
     free(elements);
   }
 
+  void DynamicIntArray::add(int element){
+
+    if (used >= capacity) {
+      // resize 
+      capacity *= growth_factor;
+      int *old_elements = elements;
+      elements = (int*)malloc(capacity*sizeof(int));
+      
+      // copy the old data 
+      for(int i=0; i<used; i++)
+	*(elements + i*sizeof(int)) = *(old_elements + i*sizeof(int));
+      
+      // clear the old memory 
+      free(old_elements);
+    }
+    
+    // add the new element
+    (*this)[used] = element;
+    used++;
+
+  } // add 
+
 
   int DynamicIntArray::getUsed() const{
     return used;
