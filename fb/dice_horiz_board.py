@@ -137,6 +137,11 @@ def answer2(t, n):
 # end answer(t, n)
 
 
+### the correct solution
+### how many ways to land on the nth space given t rolls
+### you can either roll to move forward, backward, or stay in the same place
+### you lose if you are on first and move back
+### once you are on the last, you can only stay in the same place or you lose
 
 def answer(t, n):
     """t rolls, n spaces on board"""
