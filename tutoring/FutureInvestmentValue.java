@@ -20,7 +20,7 @@ public class FutureInvestmentValue
 	double futureValue = investmentAmount * Math.pow(1+monthlyInterestRate, numberOfYears*12);
 
 	System.out.print("Accumulated value is ");
-	System.out.println(futureValue);
+	System.out.println(futureValue);;
 
 	return;
     } // main 
